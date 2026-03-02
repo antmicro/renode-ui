@@ -1,0 +1,101 @@
+image: node:24-bookworm
+
+stages:
+  - build
+  - test
+  - export-neutralino
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+  FRONTEND_BASE_PATH: frontend/
+  SCALENODE_DISK: 8
+
+.test_template: &test_template
+  stage: test
+
+  variables:
+    SCALENODE_RAM: 6114
+
+  before_script:
+    - apt update -qq > /dev/null 2>&1
+    - apt install -y -qq tar > /dev/null 2>&1
+    - ./scripts/install_renode.sh
+    - npm ci --prefix="$FRONTEND_BASE_PATH"
+
+  artifacts:
+    when: on_failure
+    paths:
+      - "$FRONTEND_BASE_PATH/test-results/"
+      - "httpserver.log"
+    expire_in: 1 week
+
+build:
+  stage: build
+  script:
+    - cd $FRONTEND_BASE_PATH
+    - npm ci
+    - npm run format:check
+    - npm run build:web
+    - npm run build:lib
+
+  artifacts:
+    paths:
+      - "$FRONTEND_BASE_PATH/build/*"
+      - "$FRONTEND_BASE_PATH/dist/*"
+    expire_in: 1 week
+
+test_chromium:
+  <<: *test_template
+  script:
+    - npm run test:ci:chrome --prefix="$FRONTEND_BASE_PATH"
+
+test_old_chromium:
+  <<: *test_template
+  script:
+    # Forcefully override version to use Chromium 116.0.5845.82 (August 8th 2023)
+    - npm i playwright@1.37
+    - npm run test:ci:chrome --prefix="$FRONTEND_BASE_PATH"
+
+test_firefox:
+  <<: *test_template
+  script:
+    - npm run test:ci:firefox --prefix="$FRONTEND_BASE_PATH"
+
+test_old_firefox:
+  <<: *test_template
+  script:
+    # Forcefully override version to use Firefox 115.0 (July 4th 2023)
+    - npm i playwright@1.37
+    - npm run test:ci:firefox --prefix="$FRONTEND_BASE_PATH"
+
+package-neutralino:
+  stage: export-neutralino
+
+  variables:
+    SCALENODE_RAM: 8192
+
+  before_script:
+  - apt update -qq > /dev/null 2>&1
+  - apt install -y -qq libarchive-tools rpm xz-utils unzip > /dev/null 2>&1
+
+  script:
+    - ./scripts/build_neutralino.sh
+    - mkdir release
+    - cd release
+    - unzip ../neutralino/dist/renode-ui-*.zip
+    - rm resources.neu
+    - chmod +x renode-ui*
+    - tar -czf renode-ui.tar.gz renode-ui*
+    - rm renode-ui-*
+
+  artifacts:
+    paths:
+      - release
+
+package-neutralino-debug:
+  stage: export-neutralino
+  extends: package-neutralino
+  variables:
+    SCALENODE_RAM: 8192
+    DEBUG_BUILD: "true"
+

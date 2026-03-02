@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%sveltekit.assets%/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="global.css" />
+    <script src="js/neutralino.js"></script>
+    <script>
+      if (Neutralino) {
+        Neutralino.init();
+        console.log('Neutralino initialized');
+        window.addEventListener('contextmenu', (event) => event.preventDefault());
+      }
+    </script>
+    %sveltekit.head%
+  </head>
+  <body data-sveltekit-preload-data="hover">
+    <div>%sveltekit.body%</div>
+  </body>
+</html>

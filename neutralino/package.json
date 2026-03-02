@@ -1,0 +1,11 @@
+{
+  "name": "neutralino-builder",
+  "version": "1.16.0",
+  "scripts": {
+    "build:neutralino": "neu update && neu build --release --embed-resources",
+    "build:neutralino-dbg": "neu update && neu build --release --embed-resources --config-file=neutralino.dbg.config.json"
+  },
+  "devDependencies": {
+    "@neutralinojs/neu": "^11.6.0"
+  }
+}

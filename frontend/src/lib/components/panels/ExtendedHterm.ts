@@ -1,0 +1,152 @@
+import { hterm, lib } from '../../thirdparty/hterm';
+import type { Socket } from '$lib/store.svelte';
+
+interface ConstructorArgs {
+  profileId: string;
+  interactible: boolean;
+  onReady?: () => void;
+  onFocus?: () => void;
+}
+
+export class ExtendedHterm extends hterm.Terminal {
+  private interactible: boolean;
+  private onReady?: () => void;
+  private currentResize?: number;
+  private writtenContent: string[];
+  private socket?: Socket;
+
+  constructor({ profileId, interactible, onReady }: ConstructorArgs) {
+    super({ profileId, storage: new lib.Storage.Local() });
+    this.interactible = interactible;
+    this.onReady = onReady;
+    this.writtenContent = [];
+  }
+
+  public async install(node: HTMLElement, socket: Socket): Promise<void> {
+    this.socket = socket;
+
+    const decoder = new TextDecoder('utf8');
+    this.socket?.addEventListener('message', async (e) => {
+      if (typeof e.data == 'string') {
+        this.interpret(e.data);
+      } else if (e.data instanceof Blob) {
+        this.interpret(decoder.decode(await e.data.arrayBuffer()));
+      } else if (e.data instanceof ArrayBuffer) {
+        this.interpret(decoder.decode(e.data));
+      } else {
+        throw new Error(
+          `Unexpected type of message. Expected string, Blob, or ArrayBuffer. Got ${(e.data as object).constructor?.name}`,
+        );
+      }
+    });
+
+    const waitForTerminalScreenTask = lib.waitForTerminalScreen(this.id);
+    this.decorate(node);
+    await waitForTerminalScreenTask;
+    await this.setStyle();
+
+    this.io.onTerminalResize = () => {
+      this.horizontalResize();
+    };
+
+    this.onVTKeystroke = (msg) => {
+      this.sendToWebsocket(msg);
+    };
+    this.io.sendString = (msg) => {
+      this.sendToWebsocket(msg);
+    };
+
+    console.assert(this.socket !== undefined, 'ws is not initialized');
+
+    this.installKeyboard();
+
+    await new Promise((r) => setTimeout(r, 500));
+    this.scrollEnd();
+    this.onReady?.();
+  }
+
+  private sendToWebsocket(message: string): void {
+    if (!this.interactible) {
+      return;
+    }
+
+    this.socket?.send(message);
+    this.scrollEnd();
+  }
+
+  public interpret(str: string): void {
+    this.writtenContent.push(str);
+    super.interpret(str);
+  }
+
+  public async horizontalResize(): Promise<void> {
+    if (this.currentResize) {
+      clearTimeout(this.currentResize);
+    }
+
+    this.currentResize = window.setTimeout(async () => {
+      try {
+        this.wipeContents();
+        this.setAbsoluteCursorPosition(0, 0);
+
+        for (const part of this.writtenContent) {
+          super.interpret(part);
+        }
+        this.io.flush();
+        this.scrollPort_.resize();
+      } finally {
+        this.currentResize = undefined;
+      }
+    }, 500);
+  }
+
+  private async setStyle(): Promise<void> {
+    await Promise.all([
+      this.prefs_?.set('allow-images-inline', true),
+      this.prefs_?.set('screen-padding-size', 17),
+      this.prefs_?.set('scrollbar-visible', true),
+      this.prefs_?.set(
+        'user-css-text',
+        `
+        /* This is a fallback for the firefox, as it does not support -webkit-scrollbar-\* */
+        body {
+          scrollbar-color: #8f8f8f #1f1f1f;
+          scrollbar-gutter: stable;
+        }
+        
+        x-screen {
+          overflow-y: auto !important;
+        }
+
+        *::-webkit-scrollbar {
+          width: 12px;
+          height: 12px;
+        }
+
+        *::-webkit-scrollbar-track {
+          background-color: #1f1f1f;
+          border-radius: 8px;
+        }
+      
+        *::-webkit-scrollbar-thumb {
+          background-color: #8f8f8f;
+          border: 3px solid #1f1f1f;
+          border-radius: 100%;
+        }
+
+        *::-webkit-scrollbar-thumb:hover {
+          background-color: #3f3f46;
+        }
+        
+        *::-webkit-scrollbar-corner {
+          background-color: #1f1f1f;
+        }
+      `,
+      ),
+    ]);
+  }
+
+  public close(): void {
+    this.socket?.close();
+  }
+}

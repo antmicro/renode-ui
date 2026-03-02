@@ -1,0 +1,25 @@
+frontend/node_modules
+
+# renode package
+bin/
+build/
+renode-portable/
+
+# Typescript build files
+frontend/out
+frontend/test-results
+# neutralino/resources
+neutralino/.tmp
+neutralino/dist
+neutralino/resources
+neutralino/node_modules
+
+# CI test docker
+Dockerfile
+
+# Tests
+**/httpserver.log
+
+# Python venv
+.venv
+venv

@@ -1,0 +1,37 @@
+.dockview-theme-renode-ui {
+  --dv-tabs-and-actions-container-height: 34px;
+  --dv-tabs-and-actions-container-background-color: var(--bg-muted);
+
+  --dv-activegroup-visiblepanel-tab-color: var(--textPrimary);
+  --dv-inactivegroup-visiblepanel-tab-color: var(--textPrimary);
+  --dv-inactivegroup-hiddenpanel-tab-color: var(--textMuted);
+  --dv-activegroup-hiddenpanel-tab-color: var(--textMuted);
+
+  --dv-activegroup-visiblepanel-tab-background-color: var(--bgGray-hover);
+  --dv-separator-border: var(--borderGray-default);
+  --dv-tab-divider-color: var(--borderGray-default);
+  --dv-drag-over-background-color: rgba(83, 89, 93, 0.5);
+  --dv-icon-hover-background-color: rgba(90, 93, 94, 0.31);
+  --dv-overlay-z-index: 999;
+  --dv-group-view-background-color: #0a0a0a;
+}
+
+.dv-tab {
+  padding: 0 !important;
+}
+
+.dv-scrollable,
+.dv-scrollable > .dv-tabs-container {
+  overflow: visible;
+  z-index: 1000;
+}
+
+.dv-void-container {
+  border-bottom: 1px solid #242424;
+}
+
+.dv-groupview.dv-active-group,
+.dv-groupview.dv-inactive-group,
+.dv-view.visible {
+  overflow: visible !important;
+}

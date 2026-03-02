@@ -1,0 +1,100 @@
+.main__hterm > * {
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+
+  --fill-hover: #41a3fd;
+  --fill-pressed: #024583;
+
+  --gray-100: #f2f2f7;
+  --gray-200: #d1d1d6;
+  --gray-300: #aeaeb2;
+  --gray-400: #8e8e93;
+  --gray-500: #636366;
+  --gray-600: #48484a;
+  --gray-700: #3a3a3c;
+  --gray-800: #2c2c2e;
+  --gray-900: #1c1c1e;
+
+  --fill-default: #037ded;
+  --accent-primary: #0a84ff;
+  --fill-hover: #41a3fd;
+  --fill-pressed: #024583;
+  --text-pressed: #aeaeb2;
+
+  --bg-default: #000000;
+  --bg-muted: #0a0a0a;
+
+  --textPrimary: #ededed;
+  --textMuted: #a1a1a1;
+  --textAccent: #47a8ff;
+  --textSuccess: #00ca50;
+  --textError: #ff565f;
+  --textWarning: #ff9400;
+
+  --bgGray-default: #1a1a1a;
+  --bgGray-hover: #1f1f1f;
+  --bgGray-active: #292929;
+  --bgGray-emphasis: #8f8f8f;
+  --bgGray-emphasis-hover: #7d7d7d;
+
+  --borderGray-default: #2e2e2e;
+  --borderGray-hover: #454545;
+  --borderGray-active: #878787;
+  --color-red-200: hsla(357, 55%, 16%, 1);
+  --color-red-800: hsla(2, 62%, 50%, 1);
+
+  --color-blue-200: hsla(213, 95%, 15%, 1);
+  --color-blue-800: hsla(216, 100%, 45%, 1);
+
+  --color-green-200: hsla(133, 75%, 11%, 1);
+  --color-green-800: hsla(123, 43%, 40%, 1);
+
+  --color-orange-200: hsla(32, 100%, 10%, 1);
+  --color-orange-800: hsla(37, 100%, 49%, 1);
+
+  --color-purple-200: hsla(279, 54%, 16%, 1);
+  --color-purple-800: hsla(272, 58%, 45%, 1);
+
+  --color-teal-200: hsla(170, 100%, 8%, 1);
+  --color-teal-800: hsla(173, 93%, 29%, 1);
+
+  /* Not available in palette, added manually */
+  --color-white-200: hsla(0, 0%, 100%, 0.2);
+  --color-white-800: hsla(0, 0%, 100%, 1);
+
+  --color-yellow-200: hsla(59, 98%, 53%, 0.2);
+  --color-yellow-800: hsla(59, 98%, 53%, 1);
+
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  background-color: #0a0a0a;
+  color-scheme: only dark;
+}
+
+.main__hterm > *::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.main__hterm > *::-webkit-scrollbar-track {
+  background-color: var(--bgGray-hover);
+  border-radius: 8px;
+}
+
+.main__hterm > *::-webkit-scrollbar-thumb {
+  background-color: var(--bgGray-emphasis);
+  border: 3px solid var(--bgGray-hover);
+  border-radius: 100%;
+}
+
+.main__hterm > *::-webkit-scrollbar-thumb:hover {
+  background-color: #3f3f46;
+}
+
+.main__hterm > *::-webkit-scrollbar-corner {
+  background-color: #1f1f1f;
+}
+
+/* NOTE: Without this custom dockview elements are not scrollable.*/
+.dockview__content__container {
+  height: 100%;
+}

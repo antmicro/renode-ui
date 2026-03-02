@@ -1,0 +1,42 @@
+.loader {
+  background-color: #0a0a0a;
+  color: #a1a1a1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 2vh;
+  z-index: 9999;
+  height: 100%;
+  width: 100%;
+  user-select: none;
+  opacity: 1;
+  transition:
+    opacity 0.8s ease-in-out,
+    visibility 0.8s ease-in-out;
+}
+
+.logo-container {
+  position: relative;
+  margin-bottom: 1rem;
+  width: 160px;
+  height: 160px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading-text {
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #f1f1f1;
+  letter-spacing: 0.05em;
+}
+
+.version {
+  font-size: 0.75rem;
+  display: flex;
+  justify-content: center;
+  color: #a3a3b1;
+}
