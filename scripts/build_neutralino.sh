@@ -17,7 +17,7 @@ fi
 
 # Copy the renode-ui static web page to neutralino builder
 mkdir -p neutralino/resources
-cp frontend/build/* neutralino/resources -r
+cp -r frontend/build/* neutralino/resources
 
 if [[ -d "node_modules" ]]; then
   echo "Neutralino already installed"
