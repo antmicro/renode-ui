@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 MAIN_DIR=$(realpath $(dirname $(dirname "$0")))
 cd $MAIN_DIR
