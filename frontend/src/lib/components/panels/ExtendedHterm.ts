@@ -1,9 +1,10 @@
 import { hterm, lib } from '../../thirdparty/hterm';
-import type { Socket } from '$lib/store.svelte';
+import type { PanelType, Socket } from '$lib/store.svelte';
 
 interface ConstructorArgs {
   profileId: string;
   interactible: boolean;
+  metadata: { panelType: PanelType; port?: number; uart?: string };
   onReady?: () => void;
   onFocus?: () => void;
 }
@@ -15,11 +16,14 @@ export class ExtendedHterm extends hterm.Terminal {
   private writtenContent: string[];
   private socket?: Socket;
 
-  constructor({ profileId, interactible, onReady }: ConstructorArgs) {
+  public metadata: { panelType: PanelType; port?: number; uart?: string };
+
+  constructor({ profileId, interactible, metadata, onReady }: ConstructorArgs) {
     super({ profileId, storage: new lib.Storage.Local() });
     this.interactible = interactible;
     this.onReady = onReady;
     this.writtenContent = [];
+    this.metadata = metadata;
   }
 
   public async install(node: HTMLElement, socket: Socket): Promise<void> {
@@ -148,5 +152,13 @@ export class ExtendedHterm extends hterm.Terminal {
 
   public close(): void {
     this.socket?.close();
+  }
+
+  metadataMatches(panelType: PanelType, port?: number, uart?: string) {
+    return (
+      this.metadata.panelType == panelType &&
+      this.metadata.port == port &&
+      this.metadata.uart == uart
+    );
   }
 }

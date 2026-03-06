@@ -8,6 +8,7 @@ import {
   openPanelsManager,
   openUARTsManager,
   RENODE_WS_PORT,
+  TERMINALS,
   waitForNoTerminalsLoading,
   type PanelType,
 } from '$lib/store.svelte';
@@ -161,6 +162,12 @@ export const focusMonitor = (dockview: DockviewApi) => {
   for (const [id, type] of openPanelsManager.entries()) {
     if (type === 'Monitor') {
       dockview.getPanel(id)?.focus();
+    }
+  }
+
+  for (const term of TERMINALS.value) {
+    if (term.metadata.panelType == 'Monitor') {
+      term.focus();
     }
   }
 };

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { decrementLoadingTerminalsAmount, type PanelType } from '$lib/store.svelte';
+  import { decrementLoadingTerminalsAmount, TERMINALS, type PanelType } from '$lib/store.svelte';
   import { ExtendedHterm } from './ExtendedHterm';
   import { typeToWsURL } from '$lib/utils';
   import { getSocketInitializer } from '$lib/store.svelte';
@@ -16,15 +16,24 @@
       const term = new ExtendedHterm({
         profileId: panelType,
         interactible: panelType === 'Monitor' || panelType === 'UARTs',
+        metadata: { panelType, port, uart },
       });
 
       const wsURL = typeToWsURL(panelType, port);
       const socketInitializer = getSocketInitializer();
       socketInitializer(wsURL, uart !== undefined ? `Analyzer (${uart})` : panelType)
         .then((socket) => term.install(element, socket))
-        .then(() => decrementLoadingTerminalsAmount());
+        .then(() => {
+          decrementLoadingTerminalsAmount();
+          TERMINALS.value.push(term);
+        });
 
-      return () => term.close();
+      return () => {
+        TERMINALS.value = TERMINALS.value.filter(
+          (term) => !term.metadataMatches(panelType, port, uart),
+        );
+        term.close();
+      };
     };
   };
 </script>
