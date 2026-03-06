@@ -13,6 +13,10 @@ else
     npm i --prefix="frontend/"
   fi
 
+  if [[ -n "$LINKED_WS_API" ]]; then
+    cd frontend; npm link renode-ws-api; cd ..
+  fi
+
   VITE_DEBUG_BUILD="$DEBUG_BUILD" VITE_NEUTRALINO=true npm run build:web --prefix="frontend/"
 fi
 
