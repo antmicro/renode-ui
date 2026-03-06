@@ -26,7 +26,11 @@ export interface Socket {
 let customWSInitializer: (wsURL: string, name: string) => Promise<Socket> = (
   wsURL: string,
   _name: string,
-) => Promise.resolve(new WebSocket(wsURL));
+) => {
+  const w = new WebSocket(wsURL);
+  w.binaryType = 'arraybuffer';
+  return Promise.resolve(w);
+};
 
 let renodeWSManager: RenodeProxySession | null = null;
 
