@@ -17,7 +17,6 @@
   <div>
     <div class="loading-text">Startup error</div>
     <div class="loading-err-text">{error}</div>
-    <div class="version">{import.meta.env.VITE_RENODE_UI_VERSION}</div>
   </div>
   <button class="reload-btn" onclick={onRetry}>Retry</button>
 </div>

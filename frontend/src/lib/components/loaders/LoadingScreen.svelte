@@ -15,7 +15,6 @@
   </div>
   <div>
     <div class="loading-text">Renode is loading...</div>
-    <div class="version">{import.meta.env.VITE_RENODE_UI_VERSION}</div>
   </div>
   <div class="status-container">
     <div class="status-dot"></div>
