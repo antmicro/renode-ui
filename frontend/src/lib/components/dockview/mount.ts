@@ -9,6 +9,7 @@ import {
   openUARTsManager,
   RENODE_WS_PORT,
   TERMINALS,
+  terminalHistories,
   waitForNoTerminalsLoading,
   type PanelType,
 } from '$lib/store.svelte';
@@ -155,6 +156,7 @@ export const registerWSProxyCallbacks = ({
     }
 
     openUARTsManager.clear();
+    terminalHistories.clear('UARTs');
   });
 };
 

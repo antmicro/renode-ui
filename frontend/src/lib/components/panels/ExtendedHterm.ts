@@ -1,10 +1,12 @@
 import { hterm, lib } from '../../thirdparty/hterm';
 import type { PanelType, Socket } from '$lib/store.svelte';
+import type { TerminalHistory } from '$lib/terminalHistory';
 
 interface ConstructorArgs {
   profileId: string;
   interactible: boolean;
   metadata: { panelType: PanelType; port?: number; uart?: string };
+  history: TerminalHistory;
   onReady?: () => void;
   onFocus?: () => void;
 }
@@ -83,16 +85,16 @@ export class ExtendedHterm extends hterm.Terminal {
   private interactible: boolean;
   private onReady?: () => void;
   private currentResize?: number;
-  private writtenContent: string[];
+  private history: TerminalHistory;
   private socket?: Socket;
 
   public metadata: { panelType: PanelType; port?: number; uart?: string };
 
-  constructor({ profileId, interactible, metadata, onReady }: ConstructorArgs) {
+  constructor({ profileId, interactible, metadata, history, onReady }: ConstructorArgs) {
     super({ profileId, storage: new lib.Storage.Local() });
     this.interactible = interactible;
     this.onReady = onReady;
-    this.writtenContent = [];
+    this.history = history;
     this.metadata = metadata;
   }
 
@@ -134,6 +136,8 @@ export class ExtendedHterm extends hterm.Terminal {
 
     this.installKeyboard();
 
+    await this.history.replayInto(this.createHistoryStream());
+
     await new Promise((r) => setTimeout(r, 500));
     this.scrollEnd();
     this.onReady?.();
@@ -149,7 +153,7 @@ export class ExtendedHterm extends hterm.Terminal {
   }
 
   public interpret(str: string): void {
-    this.writtenContent.push(str);
+    this.history.append(str);
     super.interpret(str);
   }
 
@@ -160,14 +164,7 @@ export class ExtendedHterm extends hterm.Terminal {
 
     this.currentResize = window.setTimeout(async () => {
       try {
-        this.wipeContents();
-        this.setAbsoluteCursorPosition(0, 0);
-
-        for (const part of this.writtenContent) {
-          super.interpret(part);
-        }
-        this.io.flush();
-        this.scrollPort_.resize();
+        await this.history.replayInto(this.createHistoryStream());
       } finally {
         this.currentResize = undefined;
       }
@@ -218,6 +215,18 @@ export class ExtendedHterm extends hterm.Terminal {
       `,
       ),
     ]);
+  }
+
+  private createHistoryStream(): WritableStream<string> {
+    this.wipeContents();
+    this.setAbsoluteCursorPosition(0, 0);
+    return new WritableStream<string>({
+      write: (data: string) => super.interpret(data),
+      close: () => {
+        this.io.flush();
+        this.scrollPort_.resize();
+      },
+    });
   }
 
   public close(): void {

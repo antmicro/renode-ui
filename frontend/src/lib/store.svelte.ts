@@ -1,6 +1,7 @@
 import type { RenodeProxySession } from 'renode-ws-api';
 import { SvelteMap } from 'svelte/reactivity';
 import type { ExtendedHterm } from './components/panels/ExtendedHterm';
+import { terminalHistories, type TerminalHistory } from './terminalHistory';
 
 type Terminalable = 'Monitor' | 'Renode Logs' | 'UARTs';
 export type PanelType =
@@ -78,3 +79,6 @@ export const openUARTsManager = new SvelteMap<string, { [uart: string]: number }
 export const RENODE_WS_PORT = { value: 21234 };
 
 export const TERMINALS: { value: Array<ExtendedHterm> } = { value: [] };
+
+export { terminalHistories };
+export type { TerminalHistory };

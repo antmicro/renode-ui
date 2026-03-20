@@ -1,5 +1,10 @@
 <script lang="ts">
-  import { decrementLoadingTerminalsAmount, TERMINALS, type PanelType } from '$lib/store.svelte';
+  import {
+    decrementLoadingTerminalsAmount,
+    TERMINALS,
+    terminalHistories,
+    type PanelType,
+  } from '$lib/store.svelte';
   import { ExtendedHterm } from './ExtendedHterm';
   import { typeToWsURL } from '$lib/utils';
   import { getSocketInitializer } from '$lib/store.svelte';
@@ -13,10 +18,12 @@
 
   export const installHterm = (panelType: PanelType, port?: number, uart?: string) => {
     return (element: HTMLElement) => {
+      const history = terminalHistories.getOrCreate(panelType, port, uart);
       const term = new ExtendedHterm({
         profileId: panelType,
         interactible: panelType === 'Monitor' || panelType === 'UARTs',
         metadata: { panelType, port, uart },
+        history,
       });
 
       const wsURL = typeToWsURL(panelType, port);
