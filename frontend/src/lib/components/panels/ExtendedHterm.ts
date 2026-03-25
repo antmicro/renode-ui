@@ -138,7 +138,6 @@ export class ExtendedHterm extends hterm.Terminal {
 
     await this.history.replayInto(this.createHistoryStream());
 
-    await new Promise((r) => setTimeout(r, 500));
     this.scrollEnd();
     this.onReady?.();
   }
