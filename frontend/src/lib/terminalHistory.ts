@@ -1,5 +1,6 @@
 import type { PanelType } from './store.svelte';
 
+// TODO: make this limit configurable by the end-user
 const TERMINAL_HISTORY_MAX_CHARS = 1_000_000;
 
 export class TerminalHistory {
