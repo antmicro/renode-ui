@@ -18,4 +18,8 @@
   const args = window.Neutralino ? parseArgs() : {};
 </script>
 
-<Dockview style={{ width: '100vw', height: '100vh' }} renodePort={Number(args['--renode-port'])} />
+<Dockview
+  onQuit={() => window.Neutralino.app.exit()}
+  style={{ width: '100vw', height: '100vh' }}
+  renodePort={Number(args['--renode-port'])}
+/>
