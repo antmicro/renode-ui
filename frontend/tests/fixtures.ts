@@ -50,7 +50,7 @@ const spawnRenodeWebsocketProxy = async (testName: string) => {
       passedData += new TextDecoder().decode(chunk);
       logStream.write(chunk);
 
-      if (passedData.includes('Listening for new requests')) {
+      if (passedData.includes('Loaded monitor commands')) {
         resolve();
       }
     });
