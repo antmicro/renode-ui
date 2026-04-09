@@ -107,7 +107,7 @@
 
   onMount(() => createUI());
   onDestroy(() => {
-    getRenodeWSManager().dispose();
+    getRenodeWSManager()?.dispose();
     openPanelsManager.clear();
     openUARTsManager.clear();
     clearTerminalsLoadingCounter();
