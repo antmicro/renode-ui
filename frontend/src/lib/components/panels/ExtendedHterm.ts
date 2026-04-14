@@ -91,6 +91,7 @@ export class ExtendedHterm extends hterm.Terminal {
   public metadata: { panelType: PanelType; port?: number; uart?: string };
 
   constructor({ profileId, interactible, metadata, history, onReady }: ConstructorArgs) {
+    hterm.messageManager?.disable();
     super({ profileId, storage: new lib.Storage.Local() });
     this.interactible = interactible;
     this.onReady = onReady;

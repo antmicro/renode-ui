@@ -2254,7 +2254,11 @@ lib.MessageManager.prototype.loadMessages = function(url) {
  *     found.  Returns the message name by default.
  * @return {string} The formatted translation.
  */
-lib.MessageManager.prototype.get = function(msgname, args, fallback) {
+lib.MessageManager.prototype.get = function (msgname, args, fallback) {
+  if (this.disabled) {
+    return fallback
+  }
+
   // First try the integrated browser getMessage.  We prefer that over any
   // registered messages as only the browser supports translations.
   let message = lib.i18n.getMessage(msgname, args);
@@ -2355,6 +2359,10 @@ lib.MessageManager.prototype.processI18nAttribute = function(node) {
       node.setAttribute(attr, msg);
     }
   }
+};
+
+lib.MessageManager.prototype.disable = function() {
+  this.disabled = true;
 };
 
 // Copyright 2012 The ChromiumOS Authors
@@ -4309,6 +4317,120 @@ hterm.desktopNotificationTitle = '\u266A %(title) \u266A';
 /** @type {?lib.MessageManager} */
 hterm.messageManager = null;
 
+const htermMessages = {
+	"HTERM_SPACE_CHARACTER": {
+		"description": "The word describing the space character (' '). That is, the character entered when space bar is pressed. Used for accessibility announcements.",
+		"message": "Space"
+	},
+	"HTERM_BUTTON_PREVIOUS": {
+		"description": "Button label for moving to the previous result when searching the terminal output. The user might be searching for anything in the log, and there could be may matching results.",
+		"message": "Previous"
+	},
+	"HTERM_BUTTON_NEXT": {
+		"description": "Button label for moving to the next result when searching the terminal output. The user might be searching for anything in the log, and there could be many matching results.",
+		"message": "Next"
+	},
+	"HTERM_BUTTON_FIND": {
+		"description": "Button label for finding text in the terminal output.",
+		"message": "Find"
+	},
+	"HTERM_BUTTON_CLOSE": {
+		"description": "Button label for closing the currently focused visual element.",
+		"message": "Close"
+	},
+	"HTERM_FIND_COUNTER_LABEL": {
+		"description": "Text displayed in the find bar to show how many matches were found, and which is currently selected. E.g '1/3' means 'the 1st of 3 results'.",
+		"message": "$ORDINAL$/$COUNT$",
+		"placeholders": {
+			"COUNT": {
+				"content": "$2",
+				"example": "3"
+			},
+			"ORDINAL": {
+				"content": "$1",
+				"example": "1"
+			}
+		}
+	},
+	"HTERM_FIND_RESULT_COUNT": {
+		"description": "Text displayed in the find bar to show how many matches were found. E.g '3 matches' means '3 results'.",
+		"message": "$COUNT$ matches",
+		"placeholders": {
+			"COUNT": {
+				"content": "$1",
+				"example": "3"
+			}
+		}
+	},
+	"HTERM_BUTTON_PAGE_DOWN": {
+		"description": "Button label for scrolling down one page in the terminal output history. It is meant to be read out loud by screen readers so users can interact with the element. It does not refer to the keyboard button.",
+		"message": "Page down"
+	},
+	"HTERM_BUTTON_PAGE_UP": {
+		"description": "Button label for scrolling up one page in the terminal output history. It is meant to be read out loud by screen readers so users can interact with the element. It does not refer to the keyboard button.",
+		"message": "Page up"
+	},
+	"HTERM_OPTIONS_BUTTON_LABEL": {
+		"description": "The label for the options button. This opens the program's settings/options/preferences page.",
+		"message": "Options"
+	},
+	"HTERM_ANNOUNCE_CURRENT_SCREEN_HEADER": {
+		"description": "Message spoken to a user through Assistive Technology when they scroll up/down through the screen history. The percentage of the document that has been scrolled is read out loud, followed by the text that is currently visible on screen. The trailing comma is used to help the listener by inserting a slight pause rather than using a period which would add a longer pause.",
+		"message": "$PERCENT$% scrolled,",
+		"placeholders": {
+			"PERCENT": {
+				"content": "$1",
+				"example": "15"
+			}
+		}
+	},
+	"HTERM_NOTIFY_COPY": {
+		"description": "Short status message displayed in a terminal overlay/popup/toast when the user's selection is automatically copied to the clipboard.",
+		"message": "Copied"
+	},
+
+	"HTERM_POPUP_INLINE_IMAGE_DISABLED": {
+		"description": "Message shown to the user when trying to display an image but support is disabled. 'inline' means the images will be displayed directly instead of being downloaded.",
+		"message": "Inline Images Disabled"
+	},
+	"HTERM_POPUP_INLINE_IMAGE": {
+		"description": "Message shown when asking users how they want to display inline images. 'inline' means the images will be displayed directly instead of being downloaded.",
+		"message": "Inline Images"
+	},
+	"HTERM_BUTTON_BLOCK": {
+		"description": "Button label for blocking the requested feature.",
+		"message": "Block"
+	},
+	"HTERM_BUTTON_ALLOW_SESSION": {
+		"description": "Button label for allowing the requested feature for this session only.",
+		"message": "Allow this session"
+	},
+	"HTERM_BUTTON_ALLOW_ALWAYS": {
+		"description": "Button label for always allowing the requested feature.",
+		"message": "Always allow"
+	},
+	"HTERM_LOADING_RESOURCE_FAILED": {
+		"description": "Message shown to the user when loading a resource (image, audio file, video, etc...) failed for any reason.",
+		"message": "Loading $RESOURCE$ failed",
+		"placeholders": {
+			"RESOURCE": {
+				"content": "$1",
+				"example": "some-image.gif"
+			}
+		}
+	},
+	"HTERM_LOADING_RESOURCE_START": {
+		"description": "Message shown to the user when loading a resource (image, audio file, video, etc...).",
+		"message": "Loading $RESOURCE$ ...",
+		"placeholders": {
+			"RESOURCE": {
+				"content": "$1",
+				"example": "some-image.gif"
+			}
+		}
+	},
+};
+
 /**
  * Initialize some global hterm state.
  *
@@ -4320,6 +4442,7 @@ hterm.init_ = async function() {
   return lib.i18n.getAcceptLanguages().then((languages) => {
     if (!hterm.messageManager) {
       hterm.messageManager = new lib.MessageManager(languages);
+      hterm.messageManager.addMessages(htermMessages);
     }
   });
 };
