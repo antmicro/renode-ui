@@ -7,6 +7,6 @@
     "prepare": "[ -e bin ] || neu update"
   },
   "devDependencies": {
-    "@neutralinojs/neu": "^11.6.0"
+    "@neutralinojs/neu": "^11.7.1"
   }
 }

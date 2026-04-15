@@ -12,7 +12,7 @@
 
   const props: Props = $props();
 
-  let PanelComponent = typeToComponent(props.panelType) as Component<Props>;
+  let PanelComponent = $derived(typeToComponent(props.panelType) as Component<Props>);
 </script>
 
 <PanelComponent {...props}></PanelComponent>
