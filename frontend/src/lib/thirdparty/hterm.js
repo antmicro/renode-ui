@@ -17888,8 +17888,8 @@ hterm.Terminal.IO.prototype.onTerminalResize_ = function(width, height) {
  *
  * Clients should override this to receive notification of resize.
  *
- * @param {string|number} width The new terminal width.
- * @param {string|number} height The new terminal height.
+ * @param {number} width The new terminal width.
+ * @param {number} height The new terminal height.
  */
 hterm.Terminal.IO.prototype.onTerminalResize = function(width, height) {
   // Override this.

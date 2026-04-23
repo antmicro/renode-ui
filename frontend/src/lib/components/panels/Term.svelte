@@ -4,9 +4,10 @@
     TERMINALS,
     terminalHistories,
     type PanelType,
+    getRenodeWSManager,
   } from '$lib/store.svelte';
   import { ExtendedHterm } from './ExtendedHterm';
-  import { typeToWsURL } from '$lib/utils';
+  import { typeToEndpoint, typeToWsURL } from '$lib/utils';
   import { getSocketInitializer } from '$lib/store.svelte';
 
   interface Props {
@@ -16,14 +17,20 @@
   }
   const { panelType, port, predefinedUart }: Props = $props();
 
+  const wsManager = getRenodeWSManager();
+
   export const installHterm = (panelType: PanelType, port?: number, uart?: string) => {
     return (element: HTMLElement) => {
       const history = terminalHistories.getOrCreate(panelType, port, uart);
+      const termEndpoint = typeToEndpoint(panelType, port);
       const term = new ExtendedHterm({
         profileId: panelType,
         interactible: panelType === 'Monitor' || panelType === 'UARTs',
         metadata: { panelType, port, uart },
         history,
+        onResize: (width, height) => {
+          wsManager.resizeTerminal(termEndpoint, width, height);
+        },
       });
 
       const wsURL = typeToWsURL(panelType, port);

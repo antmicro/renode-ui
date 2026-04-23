@@ -31,19 +31,22 @@ export const typeToComponent = (t: string) => {
   }
 };
 
-export const typeToWsURL = (t: string, port?: number): string => {
+export const typeToEndpoint = (t: string, port?: number): string => {
   switch (t) {
     case 'Monitor':
-      return `ws://localhost:${RENODE_WS_PORT.value}/telnet/29169`;
+      return '/telnet/29169';
     case 'Renode Logs':
-      return `ws://localhost:${RENODE_WS_PORT.value}/telnet/29170`;
+      return '/telnet/29170';
     case 'UARTs':
-      return `ws://localhost:${RENODE_WS_PORT.value}/telnet/${port}`;
+      return `/telnet/${port}`;
     default:
       console.error(`undefined port for type: ${t}`);
       return '';
   }
 };
+
+export const typeToWsURL = (t: string, port?: number): string =>
+  `ws://localhost:${RENODE_WS_PORT.value}${typeToEndpoint(t, port)}`;
 
 export const cssStringify = (obj: { [key: string]: string }): string => {
   return Object.keys(obj)

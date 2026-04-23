@@ -9,6 +9,7 @@ interface ConstructorArgs {
   history: TerminalHistory;
   onReady?: () => void;
   onFocus?: () => void;
+  onResize?: (width: number, height: number) => void;
 }
 
 class UTF8StreamDecoder {
@@ -84,17 +85,19 @@ class UTF8StreamDecoder {
 export class ExtendedHterm extends hterm.Terminal {
   private interactible: boolean;
   private onReady?: () => void;
+  private onResize?: (width: number, height: number) => void;
   private currentResize?: number;
   private history: TerminalHistory;
   private socket?: Socket;
 
   public metadata: { panelType: PanelType; port?: number; uart?: string };
 
-  constructor({ profileId, interactible, metadata, history, onReady }: ConstructorArgs) {
+  constructor({ profileId, interactible, metadata, history, onReady, onResize }: ConstructorArgs) {
     hterm.messageManager?.disable();
     super({ profileId, storage: new lib.Storage.Local() });
     this.interactible = interactible;
     this.onReady = onReady;
+    this.onResize = onResize;
     this.history = history;
     this.metadata = metadata;
   }
@@ -122,8 +125,8 @@ export class ExtendedHterm extends hterm.Terminal {
     await waitForTerminalScreenTask;
     await this.setStyle();
 
-    this.io.onTerminalResize = () => {
-      this.horizontalResize();
+    this.io.onTerminalResize = (width, height) => {
+      this.horizontalResize(width, height);
     };
 
     this.onVTKeystroke = (msg) => {
@@ -157,13 +160,14 @@ export class ExtendedHterm extends hterm.Terminal {
     super.interpret(str);
   }
 
-  public async horizontalResize(): Promise<void> {
+  public async horizontalResize(width: number, height: number): Promise<void> {
     if (this.currentResize) {
       clearTimeout(this.currentResize);
     }
 
     this.currentResize = window.setTimeout(async () => {
       try {
+        this.onResize?.(width, height);
         await this.history.replayInto(this.createHistoryStream());
       } finally {
         this.currentResize = undefined;
