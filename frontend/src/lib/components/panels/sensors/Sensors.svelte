@@ -351,9 +351,30 @@
     box-shadow: 0px 4px 4px #142d5f;
   }
 
+  .dot.yellow {
+    background-color: yellow;
+    box-shadow: 0px 4px 4px darkkhaki;
+  }
+
   .dot.orange {
     background-color: #f89a00;
     box-shadow: 0px 4px 4px #4b2b00;
+  }
+
+  .dot.white {
+    background-color: white;
+    box-shadow: 0px 4px 4px gray;
+  }
+
+  .dot.magenta {
+    background-color: magenta;
+    box-shadow: 0px 4px 4px darkmagenta;
+  }
+
+  .dot.unknown {
+    /* Fallback color for unknown LEDs */
+    background-color: white;
+    box-shadow: 0px 4px 4px gray;
   }
 
   .pill-group {
