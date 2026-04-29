@@ -7,11 +7,7 @@ cd $MAIN_DIR
 if [[ -n "$CI" && -d "frontend/build" ]]; then
   echo "Skipping frontend build."
 else
-  if [[ -n "$CI" ]]; then
-    npm ci --prefix="frontend/"
-  else
-    npm i --prefix="frontend/"
-  fi
+  npm ci --prefix="frontend/"
 
   if [[ -n "$LINKED_WS_API" ]]; then
     cd frontend; npm link renode-ws-api; cd ..
@@ -27,11 +23,7 @@ cp -r frontend/build/* neutralino/resources
 if [[ -d "node_modules" ]]; then
   echo "Neutralino already installed"
 else
-  if [[ -n "$CI" ]]; then
-    npm ci --prefix="neutralino/"
-  else
-    npm i --prefix="neutralino/"
-  fi
+  npm ci --prefix="neutralino/"
 fi
 
 # Build the standalone neutralino bundle
