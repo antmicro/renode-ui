@@ -13,13 +13,13 @@ else
 	rm -rf renode-portable/*
 fi
 
-BINARY_DOWNLOAD_URL="https://builds.renode.io/renode-latest.linux-portable-dotnet.tar.gz"
+BINARY_DOWNLOAD_URL="https://builds.renode.io/renode-latest.linux-portable.tar.gz"
 
 if [[ "$ARCH" == "arm64" ]]; then
 	if [[ "$OS" == "darwin" ]]; then
 		BINARY_DOWNLOAD_URL="https://builds.renode.io/renode-latest.osx-arm64-portable.dmg"
 	else
-		BINARY_DOWNLOAD_URL="https://builds.renode.io/renode-latest.linux-arm64-portable-dotnet.tar.gz"
+		BINARY_DOWNLOAD_URL="https://builds.renode.io/renode-latest.linux-arm64-portable.tar.gz"
 	fi
 fi
 
