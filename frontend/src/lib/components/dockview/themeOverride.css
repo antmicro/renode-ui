@@ -20,12 +20,6 @@
   padding: 0 !important;
 }
 
-.dv-scrollable,
-.dv-scrollable > .dv-tabs-container {
-  overflow: visible;
-  z-index: 1000;
-}
-
 .dv-void-container {
   border-bottom: 1px solid #242424;
 }
@@ -34,4 +28,12 @@
 .dv-groupview.dv-inactive-group,
 .dv-view.visible {
   overflow: visible !important;
+}
+
+.dv-scrollable,
+.dv-scrollable > .dv-tabs-container {
+  /* dockview uses built-in selectors with high specificity.
+     !important are needed to make sure that dropdowns are fully shown */
+  overflow: visible !important;
+  z-index: 1000 !important;
 }
