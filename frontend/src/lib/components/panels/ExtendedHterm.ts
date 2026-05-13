@@ -94,7 +94,7 @@ export class ExtendedHterm extends hterm.Terminal {
 
   constructor({ profileId, interactible, metadata, history, onReady, onResize }: ConstructorArgs) {
     hterm.messageManager?.disable();
-    super({ profileId, storage: new lib.Storage.Local() });
+    super({ profileId, storage: new lib.Storage.Local(), opts: { autofocus: false } });
     this.interactible = interactible;
     this.onReady = onReady;
     this.onResize = onResize;
