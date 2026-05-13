@@ -120,9 +120,8 @@ export class ExtendedHterm extends hterm.Terminal {
       }
     });
 
-    const waitForTerminalScreenTask = lib.waitForTerminalScreen(this.id);
     this.decorate(node);
-    await waitForTerminalScreenTask;
+    await this.screenReady();
     await this.setStyle();
 
     this.io.onTerminalResize = (width, height) => {
