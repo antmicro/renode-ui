@@ -29,6 +29,7 @@ const disableNotAllowedOverlay = (dock: DockviewApi) => {
 
 export const createDockviewApi = (node: HTMLElement) => {
   const dock = createDockview(node, {
+    disableFloatingGroups: true,
     createComponent: () => new Panel(),
     createTabComponent: () => new Tab(),
     singleTabMode: 'fullwidth',
