@@ -3,6 +3,10 @@ import { expect } from '@playwright/test';
 import { enterCommand, getTerminalLocator, getTerminalTabLocator } from './utils';
 import { test } from './fixtures';
 
+async function openPanelDropdown(tabButton: Locator) {
+  await tabButton.getByTestId('panel-dropdown-btn').click();
+}
+
 async function assertClearSuccessful(uart: Locator, uartTabBtn: Locator, monitor: Locator) {
   // All elements attached to the uart should be deleted - tab and terminal window.
   // After deletion monitor tab  should have 'data-active' attr.
@@ -45,7 +49,10 @@ async function testX86UART(page: Page) {
 }
 
 test('test open empty uarts page', async ({ page, fixtures: { loggerTabBtn } }) => {
-  await loggerTabBtn.locator('.left-group').hover();
+  await loggerTabBtn.locator('.left-group').click();
+  await expect(loggerTabBtn.locator('.group-item')).toHaveCount(0);
+
+  await openPanelDropdown(loggerTabBtn);
   await loggerTabBtn.locator('.group').nth(1).locator('.group-item').first().click();
   await expect(page.locator('.uart-main .empty')).toHaveText('No machines');
 });
@@ -56,7 +63,7 @@ test('test UARTs panel with machine with zero uarts', async ({
 }) => {
   await enterCommand(monitor, 'mach create');
 
-  await loggerTabBtn.locator('.left-group').hover();
+  await openPanelDropdown(loggerTabBtn);
   await loggerTabBtn.locator('.group').nth(1).locator('.group-item').first().click();
   await expect(page.locator('.uart-main .empty')).toHaveText('Select machine and UART');
 });

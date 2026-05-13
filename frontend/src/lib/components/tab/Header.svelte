@@ -1,11 +1,14 @@
 <script lang="ts">
   import { ChevronDown, ChevronUp, X } from '@lucide/svelte';
-  import Dropdown from './Dropdown.svelte';
+  import { DropdownMenu } from 'bits-ui';
+  import PanelDropdown from './Dropdown.svelte';
   import { typeToIcon } from '$lib/utils';
   import { openPanelsManager, type PanelType } from '$lib/store.svelte';
   import type { DockviewPanelApi } from 'dockview-core';
 
   let { api, panelType }: { api: DockviewPanelApi; panelType: PanelType } = $props();
+  let isDropdownOpen = $state(false);
+  let tabElement = $state<HTMLDivElement>();
 
   // svelte-ignore state_referenced_locally - tab props do not change
   let Icon = typeToIcon(panelType);
@@ -13,6 +16,7 @@
   const onPanelTypeChange = (v: PanelType) => {
     openPanelsManager.set(api.id, v);
     api.updateParameters({ panelType: v });
+    isDropdownOpen = false;
   };
 
   const onClose = () => {
@@ -20,34 +24,43 @@
   };
 </script>
 
-<div class="tab tab-dock">
+<div class="tab tab-dock" bind:this={tabElement}>
   <div class="left-group">
     <Icon size={16} />
     {panelType}
-    <div class="dropdown-active">
-      <ChevronUp size={16} />
-    </div>
-    <div class="dropdown-inactive">
-      <ChevronDown size={16} />
+    <div class="dropdown">
+      <DropdownMenu.Root bind:open={isDropdownOpen}>
+        <DropdownMenu.Trigger
+          class="dropdown-trigger"
+          data-test-id="panel-dropdown-btn"
+          aria-label={`Toggle ${panelType} panel menu`}
+          onclick={(event) => event.stopPropagation()}
+        >
+          {#if isDropdownOpen}
+            <ChevronUp size={16} />
+          {:else}
+            <ChevronDown size={16} />
+          {/if}
+        </DropdownMenu.Trigger>
+        <DropdownMenu.Content
+          class="popover"
+          side="bottom"
+          sideOffset={-4}
+          align="start"
+          alignOffset={4}
+          customAnchor={tabElement ?? null}
+        >
+          <PanelDropdown {panelType} {onPanelTypeChange} />
+        </DropdownMenu.Content>
+      </DropdownMenu.Root>
     </div>
   </div>
   <div class="right-group">
     <div data-test-id="close-panel-btn"><X size={16} onclick={onClose} /></div>
   </div>
-  <div class="popover">
-    <Dropdown {panelType} {onPanelTypeChange} />
-  </div>
 </div>
 
 <style>
-  .popover {
-    display: none;
-  }
-
-  .tab > * {
-    overflow: visible;
-  }
-
   .tab {
     color: #9e9ea4;
     font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
@@ -85,8 +98,7 @@
     gap: 8px;
   }
 
-  .right-group div,
-  .left-group div {
+  .right-group div {
     max-height: 16px;
   }
 
@@ -94,28 +106,36 @@
     color: #ececee;
   }
 
-  .dropdown-active {
+  .dropdown :global(.dropdown-trigger) {
+    all: unset;
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+
+  .dropdown :global(.dropdown-trigger:hover) {
+    background: rgb(255 255 255 / 0.08);
+  }
+
+  .dropdown :global(.dropdown-trigger[data-state='open'] .dropdown-icon-closed) {
     display: none;
   }
 
-  .dropdown-active,
-  .dropdown-inactive {
-    align-items: center;
-  }
-
-  .left-group:hover .dropdown-active {
+  .dropdown :global(.dropdown-trigger[data-state='open'] .dropdown-icon-open) {
     display: flex;
   }
 
-  .left-group:hover ~ .popover,
-  .popover:hover {
-    display: block;
-    position: absolute;
-    left: 4px;
-    top: 30px;
+  .dropdown :global(.dropdown-trigger:hover),
+  .dropdown :global(.dropdown-trigger[data-state='open']) {
+    background-color: #1e1e20;
+    color: #ececee;
   }
 
-  .left-group:hover .dropdown-inactive {
-    display: none;
+  .dropdown :global(.popover) {
+    z-index: 100;
   }
 </style>
