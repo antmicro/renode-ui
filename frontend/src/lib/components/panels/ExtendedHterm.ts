@@ -143,6 +143,7 @@ export class ExtendedHterm extends hterm.Terminal {
 
     this.scrollEnd();
     this.onReady?.();
+    this.scrollPort_.loadingBar?.remove();
   }
 
   private sendToWebsocket(message: string): void {
