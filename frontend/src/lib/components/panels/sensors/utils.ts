@@ -14,6 +14,7 @@ import {
   SquareActivity,
   Thermometer,
   Zap,
+  Sun,
 } from '@lucide/svelte';
 
 // NOTE: As of now Renode does not expose nor have API to assign colours
@@ -52,6 +53,8 @@ export const typeToUnit = (type: SensorType) => {
       return 'Pa';
     case SensorType.MagneticFluxDensity:
       return 'nT';
+    case SensorType.Illuminance:
+      return 'lx';
   }
 };
 
@@ -111,4 +114,5 @@ export const sensorTypeToItem: { [key: string]: { icon: typeof Icon; text: strin
   voltage: { icon: Zap, text: 'Voltage' },
   ecg: { icon: SquareActivity, text: 'ECG' },
   'magnetic-flux-density': { icon: Magnet, text: 'Magnetic flux density' },
+  illuminance: { icon: Sun, text: 'Illuminance' },
 };
