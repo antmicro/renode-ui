@@ -6,6 +6,7 @@
   import { openPanelsManager, type PanelType } from '$lib/store.svelte';
   import type { DockviewApi, DockviewPanelApi } from 'dockview-core';
   import { createPanel } from '../dockview/mount';
+  import { onMount } from 'svelte';
 
   let {
     api,
@@ -14,6 +15,7 @@
   }: { api: DockviewPanelApi; containerApi: DockviewApi; panelType: PanelType } = $props();
   let isDropdownOpen = $state(false);
   let tabElement = $state<HTMLDivElement>();
+  let isActive = $state(false);
 
   // svelte-ignore state_referenced_locally - tab props do not change
   let Icon = typeToIcon(panelType);
@@ -40,8 +42,16 @@
       api.close();
     }
   };
+
+  onMount(() => {
+    isActive = api.isActive;
+    api.onDidActiveChange((e) => {
+      isActive = e.isActive;
+    });
+  });
 </script>
 
+<div class="spacer" class:active={isActive}></div>
 <div class="tab tab-dock" bind:this={tabElement}>
   <div class="left-group">
     <Icon size={16} />
@@ -80,12 +90,29 @@
 </div>
 
 <style>
+  :root {
+    --panel-color-active: #468cfb;
+    --panel-color-inactive: #242424;
+  }
+
+  .spacer {
+    height: 2px;
+    width: 100%;
+    background-color: var(--panel-color-inactive);
+    z-index: 100;
+    position: relative;
+  }
+
+  .spacer.active {
+    background-color: var(--panel-color-active);
+  }
+
   .tab {
     color: #9e9ea4;
     font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
     height: 34px;
     background-color: #171717;
-    border: 1px #242424 solid;
+    border: 1px var(--panel-color-inactive) solid;
     padding: 0px 6px 0px 6px;
     display: flex;
     flex-direction: row;

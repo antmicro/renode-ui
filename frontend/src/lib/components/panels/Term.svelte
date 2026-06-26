@@ -9,13 +9,15 @@
   import { ExtendedHterm } from './ExtendedHterm';
   import { typeToEndpoint, typeToWsURL } from '$lib/utils';
   import { getSocketInitializer } from '$lib/store.svelte';
+  import type { DockviewPanelApi } from 'dockview-core';
 
   interface Props {
     panelType: PanelType;
+    api: DockviewPanelApi;
     port?: number;
     predefinedUart?: string;
   }
-  const { panelType, port, predefinedUart }: Props = $props();
+  const { panelType, port, predefinedUart, api }: Props = $props();
 
   const wsManager = getRenodeWSManager();
 
@@ -30,6 +32,9 @@
         history,
         onResize: (width, height) => {
           wsManager.resizeTerminal(termEndpoint, width, height);
+        },
+        onFocus: () => {
+          api.setActive();
         },
       });
 

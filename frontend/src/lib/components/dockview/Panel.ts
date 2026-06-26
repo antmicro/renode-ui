@@ -38,7 +38,6 @@ export class Panel implements IContentRenderer {
     this.mountHandle = mount(PanelSwitcher, {
       target: this._element,
       props: this.currentProps,
-      panelType: undefined,
     });
   }
 

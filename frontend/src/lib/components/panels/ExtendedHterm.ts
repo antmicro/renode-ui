@@ -86,18 +86,28 @@ export class ExtendedHterm extends hterm.Terminal {
   private interactible: boolean;
   private onReady?: () => void;
   private onResize?: (width: number, height: number) => void;
+  private onFocus?: () => void;
   private currentResize?: number;
   private history: TerminalHistory;
   private socket?: Socket;
 
   public metadata: { panelType: PanelType; port?: number; uart?: string };
 
-  constructor({ profileId, interactible, metadata, history, onReady, onResize }: ConstructorArgs) {
+  constructor({
+    profileId,
+    interactible,
+    metadata,
+    history,
+    onReady,
+    onResize,
+    onFocus,
+  }: ConstructorArgs) {
     hterm.messageManager?.disable();
     super({ profileId, storage: new lib.Storage.Local(), opts: { autofocus: false } });
     this.interactible = interactible;
     this.onReady = onReady;
     this.onResize = onResize;
+    this.onFocus = onFocus;
     this.history = history;
     this.metadata = metadata;
   }
@@ -235,6 +245,13 @@ export class ExtendedHterm extends hterm.Terminal {
 
   public close(): void {
     this.socket?.close();
+  }
+
+  public onFocusChange_(focused: boolean): void {
+    super.onFocusChange_(focused);
+    if (focused) {
+      this.onFocus?.();
+    }
   }
 
   metadataMatches(panelType: PanelType, port?: number, uart?: string) {
