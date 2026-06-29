@@ -177,7 +177,7 @@
   {#if Object.keys(machines).length > 0}
     {@const containsLeds = machines[pickedMachine]?.leds.length > 0}
     {@const containsButtons = machines[pickedMachine]?.buttons.length > 0}
-    {@const containsSensors = machines[pickedMachine]?.leds.length > 0}
+    {@const containsSensors = machines[pickedMachine]?.peripherals.length > 0}
     {@const containsAnySensor = containsLeds || containsButtons || containsSensors}
 
     <div class="container">
