@@ -1,12 +1,17 @@
 <script lang="ts">
-  import { ChevronDown, ChevronUp, X } from '@lucide/svelte';
+  import { ChevronDown, ChevronUp, SquareSplitHorizontal, X } from '@lucide/svelte';
   import { DropdownMenu } from 'bits-ui';
   import PanelDropdown from './Dropdown.svelte';
   import { typeToIcon } from '$lib/utils';
   import { openPanelsManager, type PanelType } from '$lib/store.svelte';
-  import type { DockviewPanelApi } from 'dockview-core';
+  import type { DockviewApi, DockviewPanelApi } from 'dockview-core';
+  import { createPanel } from '../dockview/mount';
 
-  let { api, panelType }: { api: DockviewPanelApi; panelType: PanelType } = $props();
+  let {
+    api,
+    containerApi,
+    panelType,
+  }: { api: DockviewPanelApi; containerApi: DockviewApi; panelType: PanelType } = $props();
   let isDropdownOpen = $state(false);
   let tabElement = $state<HTMLDivElement>();
 
@@ -19,8 +24,21 @@
     isDropdownOpen = false;
   };
 
+  const onSplit = () => {
+    createPanel({
+      dockview: containerApi,
+      panelType: 'Empty',
+      position: { referenceGroup: api.group, direction: 'right' },
+    });
+  };
+
   const onClose = () => {
-    api.close();
+    let isLastPanel = containerApi.totalPanels == 1;
+    if (isLastPanel) {
+      onPanelTypeChange('Empty');
+    } else {
+      api.close();
+    }
   };
 </script>
 
@@ -56,6 +74,7 @@
     </div>
   </div>
   <div class="right-group">
+    <div data-test-id="split-panel-btn"><SquareSplitHorizontal size={16} onclick={onSplit} /></div>
     <div data-test-id="close-panel-btn"><X size={16} onclick={onClose} /></div>
   </div>
 </div>

@@ -1,4 +1,4 @@
-import { createDockview, type DockviewApi } from 'dockview-core';
+import { createDockview, type AddPanelPositionOptions, type DockviewApi } from 'dockview-core';
 import { Panel } from './Panel';
 import { Tab } from './Tab';
 import { RenodeProxySession, type EmptyEventCallback, type UartOpenedArgs } from 'renode-ws-api';
@@ -51,6 +51,7 @@ interface CreatePanelArgs {
   port?: number;
   predefinedMachine?: string;
   predefinedUart?: string;
+  position?: AddPanelPositionOptions;
 }
 
 const DEFAULT_PANEL_DIRECTION: Record<string, { direction: string }> = {
@@ -64,12 +65,13 @@ export const createPanel = async ({
   port,
   predefinedMachine,
   predefinedUart,
+  position,
 }: CreatePanelArgs) => {
   const panelId = 'panel-' + Math.floor(Math.random() * 10000).toString();
   dockview.addPanel({
     id: panelId,
     component: panelType,
-    position: DEFAULT_PANEL_DIRECTION[panelType],
+    position: position ?? DEFAULT_PANEL_DIRECTION[panelType],
     tabComponent: 'default',
     inactive: panelType == 'Sensors',
     params: { panelType: panelType, port, predefinedMachine, predefinedUart },

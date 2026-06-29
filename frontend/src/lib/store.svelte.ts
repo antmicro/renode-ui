@@ -10,7 +10,8 @@ export type PanelType =
   | 'Keyboard shortcuts'
   | 'Documentation'
   | 'User preferences'
-  | 'Color theme';
+  | 'Color theme'
+  | 'Empty';
 
 let loadingTerminalsAmount = $state(0);
 

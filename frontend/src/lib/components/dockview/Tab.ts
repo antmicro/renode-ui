@@ -25,7 +25,11 @@ export class Tab implements ITabRenderer {
 
   init(parameters: GroupPanelPartInitParameters): void {
     this.element.setAttribute('data-test-id', `${parameters.params.panelType}-btn`);
-    this.currentProps = { api: parameters.api, panelType: parameters.params.panelType };
+    this.currentProps = {
+      api: parameters.api,
+      containerApi: parameters.containerApi,
+      panelType: parameters.params.panelType,
+    };
 
     this.mountHandle = mount(Header, {
       target: this.element,

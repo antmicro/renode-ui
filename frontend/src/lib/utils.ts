@@ -1,7 +1,15 @@
 import { RENODE_WS_PORT, type PanelType } from './store.svelte';
-import { ArrowRightLeft, Logs, Radio, SquareTerminal, type Icon } from '@lucide/svelte';
+import {
+  ArrowRightLeft,
+  Logs,
+  Radio,
+  SquareMousePointer,
+  SquareTerminal,
+  type Icon,
+} from '@lucide/svelte';
 import Terminal from './components/panels/Term.svelte';
 import UART from './components/panels/UART.svelte';
+import Empty from './components/panels/Empty.svelte';
 import Sensors from './components/panels/sensors/Sensors.svelte';
 
 export const typeToIcon = (t: PanelType): typeof Icon => {
@@ -14,6 +22,8 @@ export const typeToIcon = (t: PanelType): typeof Icon => {
       return ArrowRightLeft;
     case 'Sensors':
       return Radio;
+    case 'Empty':
+      return SquareMousePointer;
     default:
       throw new Error(`unknown icon type: ${t}`);
   }
@@ -28,6 +38,8 @@ export const typeToComponent = (t: string) => {
       return UART;
     case 'Sensors':
       return Sensors;
+    case 'Empty':
+      return Empty;
   }
 };
 

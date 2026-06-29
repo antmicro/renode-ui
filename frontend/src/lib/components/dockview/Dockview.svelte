@@ -93,6 +93,10 @@
         await createUartAndSensorPanels({ dockview, uartArgs });
       }
 
+      dockview.onDidRemovePanel((panel) => {
+        openPanelsManager.delete(panel.id);
+      });
+
       focusMonitor(dockview);
 
       isLoading = false;
