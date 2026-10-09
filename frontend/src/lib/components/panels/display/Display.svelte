@@ -18,6 +18,7 @@
   // svelte-ignore state_referenced_locally - tab props do not change
   let selectedDisplay = $state(predefinedDisplay);
   let info = $state('');
+  let mode = $state('Fit');
 
   onMount(decrementLoadingTerminalsAmount);
 </script>
@@ -32,13 +33,18 @@
           items={Object.keys(openDisplaysManager.get(selectedMachine) ?? {})}
           bind:selectedItem={selectedDisplay}
         />
+        <Select
+          header="Display mode"
+          items={['Fit', 'Stretch', 'Center']}
+          bind:selectedItem={mode}
+        />
       </div>
       <div class="info">{info}</div>
     </div>
     {@const port = openDisplaysManager.get(selectedMachine)?.[selectedDisplay]}
     {#if port}
       {#key [selectedDisplay, selectedMachine]}
-        <DisplayView {port} name={selectedDisplay} bind:info />
+        <DisplayView {port} name={selectedDisplay} {mode} bind:info />
       {/key}
     {:else}
       <div class="empty">Select machine and display</div>

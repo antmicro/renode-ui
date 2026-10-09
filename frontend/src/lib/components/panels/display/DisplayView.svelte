@@ -7,10 +7,11 @@
   interface Props {
     port: number;
     name: string;
+    mode: string;
     info?: string;
   }
 
-  let { port, name, info = $bindable('') }: Props = $props();
+  let { port, name, mode, info = $bindable('') }: Props = $props();
 
   let canvas: HTMLCanvasElement;
   let socket: Socket | undefined;
@@ -18,6 +19,8 @@
   let config: VideoConfig | undefined;
   let receivedBytes = 0;
   const decoder = new DisplayDecoder();
+
+  const objectFit: Record<string, string> = { Fit: 'contain', Stretch: 'fill', Center: 'none' };
 
   const onMessage = async (data: ArrayBuffer) => {
     receivedBytes += data.byteLength;
@@ -59,7 +62,7 @@
 </script>
 
 <div class="display-view">
-  <canvas bind:this={canvas}></canvas>
+  <canvas bind:this={canvas} style:object-fit={objectFit[mode] ?? 'contain'}></canvas>
 </div>
 
 <style>
@@ -73,7 +76,6 @@
   canvas {
     width: 100%;
     height: 100%;
-    object-fit: contain;
     image-rendering: pixelated;
   }
 </style>
