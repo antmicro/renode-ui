@@ -50,9 +50,7 @@
         });
 
       return () => {
-        TERMINALS.value = TERMINALS.value.filter(
-          (term) => !term.metadataMatches(panelType, port, uart),
-        );
+        TERMINALS.value = TERMINALS.value.filter((t) => t !== term);
         term.close();
       };
     };

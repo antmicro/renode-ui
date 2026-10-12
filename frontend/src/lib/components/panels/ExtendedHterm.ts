@@ -319,12 +319,4 @@ export class ExtendedHterm extends hterm.Terminal {
       event.preventDefault();
     }
   }
-
-  metadataMatches(panelType: PanelType, port?: number, uart?: string) {
-    return (
-      this.metadata.panelType == panelType &&
-      this.metadata.port == port &&
-      this.metadata.uart == uart
-    );
-  }
 }
