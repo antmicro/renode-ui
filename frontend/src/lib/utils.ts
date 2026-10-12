@@ -52,9 +52,9 @@ export const typeToComponent = (t: string) => {
 export const typeToEndpoint = (t: string, port?: number): string => {
   switch (t) {
     case 'Monitor':
-      return '/telnet/29169';
+      return '/monitor';
     case 'Renode Logs':
-      return '/telnet/29170';
+      return '/logs';
     case 'UARTs':
       return `/telnet/${port}`;
     case 'Displays':
