@@ -53,6 +53,7 @@ interface CreatePanelArgs {
   predefinedUart?: string;
   predefinedDisplay?: string;
   position?: AddPanelPositionOptions;
+  keepFocus?: boolean;
 }
 
 const DEFAULT_PANEL_DIRECTION: Record<string, { direction: string }> = {
@@ -69,18 +70,25 @@ export const createPanel = async ({
   predefinedUart,
   predefinedDisplay,
   position,
+  keepFocus = false,
 }: CreatePanelArgs) => {
   const panelId = 'panel-' + Math.floor(Math.random() * 10000).toString();
+
+  let currentPanel = dockview.activePanel;
+
   dockview.addPanel({
     id: panelId,
     component: panelType,
     position: position ?? DEFAULT_PANEL_DIRECTION[panelType],
     tabComponent: 'default',
-    inactive: panelType == 'Sensors',
     params: { panelType: panelType, port, predefinedMachine, predefinedUart, predefinedDisplay },
   });
 
   incrementLoadingTerminalsAmount();
+  if (keepFocus) {
+    currentPanel?.focus();
+  }
+
   openPanelsManager.set(panelId, panelType);
   await waitForNoTerminalsLoading();
 };
@@ -108,6 +116,7 @@ export const createUartAndSensorPanels = async ({
       dockview,
       panelType: 'Sensors',
       predefinedMachine: uartArgs.machineName,
+      keepFocus: true,
     });
   }
 

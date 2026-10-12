@@ -4,14 +4,21 @@
   import Select from './Select.svelte';
   import { SvelteMap } from 'svelte/reactivity';
   import Term from './Term.svelte';
+  import type { DockviewPanelApi } from 'dockview-core';
 
   interface Props {
     panelType: PanelType;
     predefinedMachine?: string;
     predefinedUart?: string;
+    api: DockviewPanelApi;
   }
 
-  const { panelType, predefinedMachine = 'Machines', predefinedUart = 'UARTs' }: Props = $props();
+  const {
+    panelType,
+    predefinedMachine = 'Machines',
+    predefinedUart = 'UARTs',
+    api,
+  }: Props = $props();
 
   let machines: string[] = $state([]);
   let uarts = new SvelteMap<string, string[]>();
@@ -51,7 +58,7 @@
         {@const port = openUARTsManager.get(selectedMachine)?.[selectedUART]}
         {#if port}
           {#key [selectedUART, selectedMachine]}
-            <Term {panelType} {port} predefinedUart={selectedUART} />
+            <Term {api} {panelType} {port} predefinedUart={selectedUART} />
           {/key}
         {:else}
           <div class="empty">No ports open for this UART</div>

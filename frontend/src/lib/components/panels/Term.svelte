@@ -35,6 +35,12 @@
         },
       });
 
+      api.onDidActiveChange((e) => {
+        if (e.isActive) {
+          term.focus();
+        }
+      });
+
       const wsURL = typeToWsURL(panelType, port);
       getSocketConsole(wsURL, uart !== undefined ? `Analyzer (${uart})` : panelType)
         .then((con) => term.install(element, con))

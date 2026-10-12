@@ -3,16 +3,10 @@
   import { DropdownMenu } from 'bits-ui';
   import PanelDropdown from './Dropdown.svelte';
   import { typeToIcon } from '$lib/utils';
-  import { openPanelsManager, type PanelType } from '$lib/store.svelte';
-  import type { DockviewApi, DockviewPanelApi } from 'dockview-core';
-  import { createPanel } from '../dockview/mount';
+  import { ACTIONS_MANAGER, openPanelsManager, type PanelType } from '$lib/store.svelte';
   import { onMount } from 'svelte';
 
-  let {
-    api,
-    containerApi,
-    panelType,
-  }: { api: DockviewPanelApi; containerApi: DockviewApi; panelType: PanelType } = $props();
+  let { api, panelType }: { api: DockviewPanelApi; panelType: PanelType } = $props();
   let isDropdownOpen = $state(false);
   let tabElement = $state<HTMLDivElement>();
   let isActive = $state(false);
@@ -27,23 +21,11 @@
   };
 
   const onSplit = () => {
-    let panel = containerApi.getPanel(api.id);
-
-    createPanel({
-      dockview: containerApi,
-      panelType: panelType,
-      position: { referenceGroup: api.group, direction: 'right' },
-      ...panel?.params,
-    });
+    ACTIONS_MANAGER.resolveAction('node.split');
   };
 
   const onClose = () => {
-    let isLastPanel = containerApi.totalPanels == 1;
-    if (isLastPanel) {
-      onPanelTypeChange('Empty');
-    } else {
-      api.close();
-    }
+    ACTIONS_MANAGER.resolveAction('node.close');
   };
 
   onMount(() => {

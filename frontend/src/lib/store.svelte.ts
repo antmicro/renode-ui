@@ -1,6 +1,7 @@
 import type { RenodeProxySession } from 'renode-ws-api';
 import { SvelteMap } from 'svelte/reactivity';
 import { SocketConsole, type ExtendedHterm } from './components/panels/ExtendedHterm';
+import { ActionsManager, MacroParser } from './actions.svelte';
 
 type Terminalable = 'Monitor' | 'Renode Logs' | 'UARTs';
 export type PanelType =
@@ -90,3 +91,5 @@ export const RENODE_WS_PORT = { value: 21234 };
 export const SOCKET_CONSOLES: Record<string, SocketConsole> = {};
 
 export const TERMINALS: { value: Array<ExtendedHterm> } = { value: [] };
+
+export const ACTIONS_MANAGER: ActionsManager = new ActionsManager();
