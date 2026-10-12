@@ -83,8 +83,6 @@ export const waitForNoTerminalsLoading = async () => {
   }
 };
 
-export const openUARTsManager = new SvelteMap<string, { [uart: string]: number }>();
-
 export const openDisplaysManager = new SvelteMap<string, { [display: string]: number }>();
 
 export const RENODE_WS_PORT = { value: 21234 };

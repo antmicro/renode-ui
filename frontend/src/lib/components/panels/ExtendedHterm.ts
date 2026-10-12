@@ -4,7 +4,7 @@ import type { PanelType, Socket, SocketInitializerFn, SocketMessageData } from '
 interface ConstructorArgs {
   profileId: string;
   interactible: boolean;
-  metadata: { panelType: PanelType; port?: number; uart?: string };
+  metadata: { panelType: PanelType };
   onReady?: () => void;
   onFocus?: () => void;
   onResize?: (width: number, height: number) => void;
@@ -173,7 +173,7 @@ export class ExtendedHterm extends hterm.Terminal {
   private console?: SocketConsole;
   private identifier?: string;
 
-  public metadata: { panelType: PanelType; port?: number; uart?: string };
+  public metadata: { panelType: PanelType };
 
   constructor({ profileId, interactible, metadata, onReady, onResize, onFocus }: ConstructorArgs) {
     hterm.messageManager?.disable();

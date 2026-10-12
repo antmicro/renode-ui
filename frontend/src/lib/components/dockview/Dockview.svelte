@@ -9,7 +9,6 @@
     getRenodeWSManager,
     openDisplaysManager,
     openPanelsManager,
-    openUARTsManager,
     RENODE_WS_PORT,
     ACTIONS_MANAGER,
     setRenodeWSManager,
@@ -378,7 +377,6 @@
     ACTIONS_MANAGER.unregisterNamespace(DOCKVIEW_NAMESPACE);
     getRenodeWSManager()?.dispose();
     openPanelsManager.clear();
-    openUARTsManager.clear();
     openDisplaysManager.clear();
     clearTerminalsLoadingCounter();
     dockview?.dispose();

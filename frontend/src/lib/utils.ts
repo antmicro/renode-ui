@@ -49,14 +49,19 @@ export const typeToComponent = (t: string) => {
   }
 };
 
-export const typeToEndpoint = (t: string, port?: number): string => {
+export const typeToEndpoint = (
+  t: string,
+  port?: number,
+  machine?: string,
+  uart?: string,
+): string => {
   switch (t) {
     case 'Monitor':
       return '/monitor';
     case 'Renode Logs':
       return '/logs';
     case 'UARTs':
-      return `/telnet/${port}`;
+      return `/uart/${encodeURIComponent(machine!)}/${encodeURIComponent(uart!)}`;
     case 'Displays':
       return `/display/${port}`;
     default:
@@ -65,8 +70,8 @@ export const typeToEndpoint = (t: string, port?: number): string => {
   }
 };
 
-export const typeToWsURL = (t: string, port?: number): string =>
-  `ws://localhost:${RENODE_WS_PORT.value}${typeToEndpoint(t, port)}`;
+export const typeToWsURL = (t: string, port?: number, machine?: string, uart?: string): string =>
+  `ws://localhost:${RENODE_WS_PORT.value}${typeToEndpoint(t, port, machine, uart)}`;
 
 export const cssStringify = (obj: { [key: string]: string }): string => {
   return Object.keys(obj)

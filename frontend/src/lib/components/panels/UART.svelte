@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getRenodeWSManager, openUARTsManager, type PanelType } from '$lib/store.svelte';
+  import { getRenodeWSManager, type PanelType } from '$lib/store.svelte';
   import { Ellipsis } from '@lucide/svelte';
   import Select from './Select.svelte';
   import { SvelteMap } from 'svelte/reactivity';
@@ -55,14 +55,14 @@
         </div>
       </div>
       {#if selectedMachine !== 'Machines' && selectedUART !== 'UARTs'}
-        {@const port = openUARTsManager.get(selectedMachine)?.[selectedUART]}
-        {#if port}
-          {#key [selectedUART, selectedMachine]}
-            <Term {api} {panelType} {port} predefinedUart={selectedUART} />
-          {/key}
-        {:else}
-          <div class="empty">No ports open for this UART</div>
-        {/if}
+        {#key [selectedUART, selectedMachine]}
+          <Term
+            {api}
+            {panelType}
+            predefinedMachine={selectedMachine}
+            predefinedUart={selectedUART}
+          />
+        {/key}
       {:else}
         <div class="empty">Select machine and UART</div>
       {/if}

@@ -7,7 +7,6 @@ import {
   incrementLoadingTerminalsAmount,
   openDisplaysManager,
   openPanelsManager,
-  openUARTsManager,
   RENODE_WS_PORT,
   TERMINALS,
   waitForNoTerminalsLoading,
@@ -120,18 +119,9 @@ export const createUartAndSensorPanels = async ({
     });
   }
 
-  const existingUart = openUARTsManager.get(uartArgs.machineName) ?? {};
-  if (!(uartArgs.name in existingUart)) {
-    openUARTsManager.set(uartArgs.machineName, {
-      ...existingUart,
-      [uartArgs.name]: uartArgs.port,
-    });
-  }
-
   await createPanel({
     dockview,
     panelType: 'UARTs',
-    port: uartArgs.port,
     predefinedMachine: uartArgs.machineName,
     predefinedUart: uartArgs.name,
   });
@@ -181,7 +171,6 @@ export const registerWSProxyCallbacks = ({
       openPanelsManager.delete(id);
     }
 
-    openUARTsManager.clear();
     openDisplaysManager.clear();
   });
 };

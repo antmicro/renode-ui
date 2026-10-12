@@ -13,20 +13,20 @@
   interface Props {
     panelType: PanelType;
     api: DockviewPanelApi;
-    port?: number;
+    predefinedMachine?: string;
     predefinedUart?: string;
   }
-  const { panelType, port, predefinedUart, api }: Props = $props();
+  const { panelType, predefinedMachine, predefinedUart, api }: Props = $props();
 
   const wsManager = getRenodeWSManager();
 
-  export const installHterm = (panelType: PanelType, port?: number, uart?: string) => {
+  export const installHterm = (panelType: PanelType, machine?: string, uart?: string) => {
     return (element: HTMLElement) => {
-      const termEndpoint = typeToEndpoint(panelType, port);
+      const termEndpoint = typeToEndpoint(panelType, undefined, machine, uart);
       const term = new ExtendedHterm({
         profileId: panelType,
         interactible: panelType === 'Monitor' || panelType === 'UARTs',
-        metadata: { panelType, port, uart },
+        metadata: { panelType },
         onResize: (width, height) => {
           wsManager.resizeTerminal(termEndpoint, width, height);
         },
@@ -41,7 +41,7 @@
         }
       });
 
-      const wsURL = typeToWsURL(panelType, port);
+      const wsURL = typeToWsURL(panelType, undefined, machine, uart);
       getSocketConsole(wsURL, uart !== undefined ? `Analyzer (${uart})` : panelType)
         .then((con) => term.install(element, con))
         .then(() => {
@@ -60,7 +60,7 @@
 <div
   data-test-id={panelType}
   class="hterm-install-point"
-  {@attach installHterm(panelType, port, predefinedUart)}
+  {@attach installHterm(panelType, predefinedMachine, predefinedUart)}
 ></div>
 
 <style>
