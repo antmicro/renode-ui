@@ -16,6 +16,7 @@
     setSocketInitializer,
     type PanelType,
     type SocketInitializerFn,
+    KEYBOARD_MANAGER,
   } from '$lib/store.svelte';
   import { RenodeProxySession, type UartOpenedArgs } from 'renode-ws-api';
   import LoadingScreen from '../loaders/LoadingScreen.svelte';
@@ -358,6 +359,9 @@
       });
 
       focusMonitor(dockview);
+      dockview.onDidActivePanelChange((panel) => {
+        KEYBOARD_MANAGER.currentContext = panel?.params?.panelType;
+      });
 
       isLoading = false;
       onLoad?.(getRenodeWSManager());

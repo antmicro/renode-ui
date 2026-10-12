@@ -309,6 +309,17 @@ export class ExtendedHterm extends hterm.Terminal {
     }
   }
 
+  public onKeyboardActivity_(event: KeyboardEvent): void {
+    let newEvent = new CustomEvent('hterm-keydown', {
+      detail: event,
+      cancelable: true,
+    });
+
+    if (!document.dispatchEvent(newEvent)) {
+      event.preventDefault();
+    }
+  }
+
   metadataMatches(panelType: PanelType, port?: number, uart?: string) {
     return (
       this.metadata.panelType == panelType &&

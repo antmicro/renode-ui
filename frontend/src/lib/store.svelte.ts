@@ -2,6 +2,7 @@ import type { RenodeProxySession } from 'renode-ws-api';
 import { SvelteMap } from 'svelte/reactivity';
 import { SocketConsole, type ExtendedHterm } from './components/panels/ExtendedHterm';
 import { ActionsManager, MacroParser } from './actions.svelte';
+import { KeyboardManager } from './keyboard.svelte';
 
 type Terminalable = 'Monitor' | 'Renode Logs' | 'UARTs';
 export type PanelType =
@@ -93,3 +94,7 @@ export const SOCKET_CONSOLES: Record<string, SocketConsole> = {};
 export const TERMINALS: { value: Array<ExtendedHterm> } = { value: [] };
 
 export const ACTIONS_MANAGER: ActionsManager = new ActionsManager();
+
+export const KEYBOARD_MANAGER: KeyboardManager = new KeyboardManager((macro) =>
+  MacroParser.parseSingleAndExecute(ACTIONS_MANAGER, macro as string),
+);
