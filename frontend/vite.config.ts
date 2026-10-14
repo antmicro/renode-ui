@@ -8,10 +8,10 @@ export default defineConfig({
   build: debugBuild
     ? undefined
     : {
-        minify: 'terser',
-        terserOptions: {
-          compress: {
-            pure_funcs: ['console.log', 'console.debug'],
+        minify: 'oxc',
+        rolldownOptions: {
+          treeshake: {
+            manualPureFunctions: ['console.log', 'console.debug'],
           },
         },
       },
