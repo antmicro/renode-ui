@@ -14,5 +14,6 @@ export default defineConfig({
             manualPureFunctions: ['console.log', 'console.debug'],
           },
         },
+        assetsInlineLimit: Infinity,
       },
 });
