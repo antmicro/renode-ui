@@ -1,4 +1,6 @@
 <script lang="ts">
+  import '$lib/assets/global.css';
+  import favicon from '$lib/assets/favicon.svg';
   import Dockview from '$lib/components/dockview/Dockview.svelte';
 
   const parseArgs = () =>
@@ -17,6 +19,10 @@
 
   const args = window.Neutralino ? parseArgs() : {};
 </script>
+
+<svelte:head>
+  <link rel="icon" type="image/svg+xml" href={favicon} />
+</svelte:head>
 
 <Dockview
   onQuit={() => window.Neutralino.app.exit()}
