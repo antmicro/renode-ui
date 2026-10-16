@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ChevronDown, ChevronUp, SquareSplitHorizontal, X } from '@lucide/svelte';
+  import { ChevronDown, ChevronUp, SquareSplitHorizontal, X, Maximize } from '@lucide/svelte';
   import { DropdownMenu } from 'bits-ui';
   import PanelDropdown from './Dropdown.svelte';
   import { typeToIcon } from '$lib/utils';
@@ -26,6 +26,10 @@
 
   const onClose = () => {
     ACTIONS_MANAGER.resolveAction('node.close');
+  };
+
+  const onMaximize = () => {
+    ACTIONS_MANAGER.resolveAction('node.maximize');
   };
 
   onMount(() => {
@@ -69,6 +73,7 @@
     </div>
   </div>
   <div class="right-group">
+    <div data-test-id="maximize-panel-btn"><Maximize size={16} onclick={onMaximize} /></div>
     <div data-test-id="split-panel-btn"><SquareSplitHorizontal size={16} onclick={onSplit} /></div>
     <div data-test-id="close-panel-btn"><X size={16} onclick={onClose} /></div>
   </div>

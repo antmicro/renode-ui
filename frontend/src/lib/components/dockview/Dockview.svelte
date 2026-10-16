@@ -325,6 +325,19 @@
       },
       { description: 'Focus panel' },
     );
+
+    namespace.registerAction(
+      'maximize',
+      async ({ panelId }: { panelId?: string }) => {
+        let panel = getPanelByIdOrActive(panelId);
+        if (panel?.api.isMaximized()) {
+          panel?.api.exitMaximized();
+        } else {
+          panel?.api.maximize();
+        }
+      },
+      { description: 'Maximize panel' },
+    );
   };
 
   const createWidgetUI = async (params: ParamsDto, dockview: DockviewApi) => {
