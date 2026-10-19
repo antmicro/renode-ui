@@ -101,6 +101,7 @@ export class KeyboardManager {
       true,
     );
 
+    this.registerKeybinding('f11', 'node.maximize');
     this.registerKeybinding('ctrl-enter', 'node.split');
     this.registerKeybinding('ctrl-backspace', 'node.close');
 
