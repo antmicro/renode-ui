@@ -67,3 +67,43 @@ test('test running script, opening uart windows and interacting with them', asyn
   await uart.pressSequentially('version');
   await expect(uart.getByText('boot > version')).toBeVisible();
 });
+
+test('test toggle maximize panes on button click', async ({
+  fixtures: { monitor, logger, monitorTabBtn, loggerTabBtn },
+}) => {
+  // initially both panes should be visible
+  await expect(monitor).toBeVisible();
+  await expect(logger).toBeVisible();
+
+  // focus monitor tab
+  await monitorTabBtn.click();
+  // toggle maximize pane
+  await monitorTabBtn.getByTestId('maximize-panel-btn').click();
+
+  // monitor should be maximized, logger should be hidden
+  await expect(monitor).toBeVisible();
+  await expect(logger).toBeHidden();
+
+  // restore minimize pane
+  await monitorTabBtn.getByTestId('maximize-panel-btn').click();
+
+  // after restore both panes should be visible again
+  await expect(monitor).toBeVisible();
+  await expect(logger).toBeVisible();
+
+  // focus logger tab
+  await loggerTabBtn.click();
+  // toggle maximize pane
+  await loggerTabBtn.getByTestId('maximize-panel-btn').click();
+
+  // logger should be maximized, monitor should be hidden
+  await expect(logger).toBeVisible();
+  await expect(monitor).toBeHidden();
+
+  // restore minimize pane
+  await loggerTabBtn.getByTestId('maximize-panel-btn').click();
+
+  // after restore both panes should be visible again
+  await expect(monitor).toBeVisible();
+  await expect(logger).toBeVisible();
+});
