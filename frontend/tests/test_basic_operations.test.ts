@@ -28,7 +28,7 @@ test('test running script, opening uart windows and interacting with them', asyn
   const uartBtn = await getTerminalTabLocator(page, 'UARTs-btn');
 
   const monitorBtn = await getTerminalTabLocator(page, 'Monitor-btn');
-  await monitorBtn.click();
+  await monitorBtn.click({ position: { x: 1, y: 1 } });
   await expect(monitor.getByText('(x86)')).toBeVisible();
 
   // go back to the uarts

@@ -8,7 +8,7 @@ async function runSensorDemo(page: Page, monitor: Locator): Promise<void> {
 
   const sensorsTabLocator = await getTerminalTabLocator(page, 'Sensors-btn');
   await expect(sensorsTabLocator).toHaveCount(1);
-  await sensorsTabLocator.click();
+  await sensorsTabLocator.click({ position: { x: 1, y: 1 } });
   await page.mouse.move(0, -500); // moving mouse down so that the hover popup disappears
 }
 
