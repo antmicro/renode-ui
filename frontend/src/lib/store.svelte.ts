@@ -3,6 +3,7 @@ import { SvelteMap } from 'svelte/reactivity';
 import { SocketConsole, type ExtendedHterm } from './components/panels/ExtendedHterm';
 import { ActionsManager, MacroParser } from './actions.svelte';
 import { KeyboardManager } from './keyboard.svelte';
+import { toast } from '$lib/aesir/src/index.js';
 
 type Terminalable = 'Monitor' | 'Renode Logs' | 'UARTs';
 export type PanelType =
@@ -52,7 +53,30 @@ export const getSocketConsole = (wsURL: string, name: string): Promise<SocketCon
 export const openSocket = (wsURL: string, name: string) => customWSInitializer(wsURL, name);
 
 export const setRenodeWSManager = (manager: RenodeProxySession) => {
-  renodeWSManager = manager;
+  renodeWSManager = new Proxy(manager, {
+    get(target, prop, receiver) {
+      const value = target[prop];
+
+      if (value instanceof Function) {
+        let method = value;
+
+        return function (...args) {
+          var ret;
+          try {
+            ret = method.call(this, ...args);
+          } catch (error) {
+            throw interceptApiException(error);
+          }
+          if (ret instanceof Promise) {
+            return ret.catch(interceptApiException);
+          }
+          return ret;
+        };
+      }
+
+      return value;
+    },
+  });
 };
 
 export const setSocketInitializer = (initializer: SocketInitializerFn) => {
@@ -102,3 +126,21 @@ export const ACTIONS_MANAGER: ActionsManager = new ActionsManager();
 export const KEYBOARD_MANAGER: KeyboardManager = new KeyboardManager((macro) =>
   MacroParser.parseSingleAndExecute(ACTIONS_MANAGER, macro as string),
 );
+
+export const handleException = (error: Error): boolean => {
+  toast.error('Internal error occured');
+  console.error('Internal error occured:', error);
+  return true;
+};
+
+const interceptApiException = (error: Error): Error => {
+  if (error.message == 'Not connected') {
+    toast.error('WS-API connection Error', error.message);
+  } else if (error.message.startsWith('Protocol version')) {
+    toast.error('WS-API error', error.message);
+  } else {
+    toast.error('Internal WS-API usage error occured');
+    console.error('WS-API error:', error);
+  }
+  return error;
+};
