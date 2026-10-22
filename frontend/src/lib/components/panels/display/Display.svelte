@@ -9,7 +9,7 @@
     predefinedDisplay?: string;
   }
 
-  const { predefinedMachine = 'Machines', predefinedDisplay = 'Displays' }: Props = $props();
+  const { predefinedMachine = null, predefinedDisplay = null }: Props = $props();
 
   const machines = $derived([...openDisplaysManager.keys()]);
 

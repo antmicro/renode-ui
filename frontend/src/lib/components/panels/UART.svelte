@@ -13,12 +13,7 @@
     api: DockviewPanelApi;
   }
 
-  const {
-    panelType,
-    predefinedMachine = 'Machines',
-    predefinedUart = 'UARTs',
-    api,
-  }: Props = $props();
+  const { panelType, predefinedMachine = null, predefinedUart = null, api }: Props = $props();
 
   let machines: string[] = $state([]);
   let uarts = new SvelteMap<string, string[]>();
@@ -54,7 +49,7 @@
           <Ellipsis size={16} color="#9E9EA4" />
         </div>
       </div>
-      {#if selectedMachine !== 'Machines' && selectedUART !== 'UARTs'}
+      {#if selectedMachine !== null && selectedUART !== null}
         {#key [selectedUART, selectedMachine]}
           <Term
             {api}

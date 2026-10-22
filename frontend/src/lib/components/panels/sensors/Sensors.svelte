@@ -11,7 +11,7 @@
   import { LEDColour, type MachinePeripherals, type Peripheral } from './types';
   import { btnNamesToBtns, ledNamesToLeds } from './utils';
 
-  const { predefinedMachine = 'Machines' }: { predefinedMachine?: string } = $props();
+  const { predefinedMachine = null }: { predefinedMachine?: string } = $props();
 
   let machines: Record<string, MachinePeripherals> = $state({});
 
@@ -28,7 +28,7 @@
   const clearCallback = () => {
     machines = {};
     pickedSensor = 'All sensors';
-    pickedMachine = 'Machines';
+    pickedMachine = null;
   };
 
   let btnStateChangedCallback = (e: ButtonStateChangedArgs) => {
@@ -198,7 +198,7 @@
         </div>
         <Ellipsis size={16} />
       </div>
-      {#if pickedMachine !== 'Machines'}
+      {#if pickedMachine != null}
         <div class="scrollable">
           {#if containsAnySensor}
             <div class="sensors">

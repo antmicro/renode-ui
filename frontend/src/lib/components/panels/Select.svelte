@@ -7,6 +7,7 @@
     hideHeader?: boolean;
     selectedItem: string;
     disabled?: boolean;
+    unselectable?: boolean;
   }
 
   let {
@@ -15,14 +16,16 @@
     hideHeader = false,
     selectedItem = $bindable(),
     disabled = false,
+    unselectable = true,
   }: Props = $props();
 
+  let initial = selectedItem;
   let open = $state(false);
 </script>
 
 <div data-test-id={`${header}-btn`}>
   <button {disabled} class="open" onclick={() => (open = !open)}
-    >{selectedItem}<ChevronsUpDown size={14} /></button
+    >{selectedItem ?? header}<ChevronsUpDown size={14} /></button
   >
   {#if open}
     <div class="dropdown">
@@ -34,8 +37,8 @@
           <button
             class="item"
             onclick={() => {
-              if (selectedItem === item) {
-                selectedItem = header;
+              if (unselectable && selectedItem === item) {
+                selectedItem = initial;
               } else {
                 selectedItem = item;
               }
