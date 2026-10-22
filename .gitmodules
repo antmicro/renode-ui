@@ -1,0 +1,4 @@
+[submodule "frontend/src/lib/aesir"]
+	path = frontend/src/lib/aesir
+	url = https://github.com/antmicro/aesir-components.git
+	branch = distribution/svelte

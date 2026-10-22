@@ -1,6 +1,9 @@
 <script lang="ts">
-  import '$lib/assets/global.css';
+  import '$lib/aesir/src/styles/aesir-global.css';
+  import '$lib/aesir/src/styles/aesir-motion.css';
+  import '$lib/aesir/src/styles/aesir-typography.css';
   import favicon from '$lib/assets/favicon.svg';
+  import '$lib/assets/global.css';
   import Dockview from '$lib/components/dockview/Dockview.svelte';
 
   const parseArgs = () =>

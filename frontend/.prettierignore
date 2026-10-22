@@ -6,5 +6,6 @@ bun.lock
 bun.lockb
 
 src/lib/thirdparty/*
+src/lib/aesir/
 dist/
 build/
