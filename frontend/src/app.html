@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="js/neutralino.js"></script>
     <script>
-      if (window.Neutralino) {
+      if (typeof Neutralino !== 'undefined') {
         Neutralino.init();
         console.log('Neutralino initialized');
         window.addEventListener('contextmenu', (event) => event.preventDefault());
