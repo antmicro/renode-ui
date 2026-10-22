@@ -65,7 +65,7 @@
       <div class="empty">No machines</div>
     {/if}
   {:catch e}
-    <div class="empty">Could not load machines: {e}</div>
+    <div class="empty">Could not load machines or UARTs: {e}</div>
   {/await}
 </div>
 
