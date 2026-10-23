@@ -11,8 +11,16 @@ variables:
   FRONTEND_BASE_PATH: frontend/
   SCALENODE_DISK: 8
 
+# Triggered for master pushes, schedules etc. and on MR creation or modification
+.only_master_and_all_mrs: &only_master_and_all_mrs
+  only:
+    variables:
+    - $CI_COMMIT_REF_NAME == "master"
+    - $CI_PIPELINE_SOURCE == "merge_request"
+
 .test_template:
   stage: test
+  <<: *only_master_and_all_mrs
 
   variables:
     SCALENODE_RAM: 6114
@@ -36,6 +44,7 @@ variables:
 
 build:
   stage: build
+  <<: *only_master_and_all_mrs
   script:
     - cd $FRONTEND_BASE_PATH
     - npm ci
@@ -83,6 +92,7 @@ test_old_firefox:
 
 package-neutralino:
   stage: export-neutralino
+  <<: *only_master_and_all_mrs
 
   variables:
     SCALENODE_RAM: 8192
@@ -108,6 +118,7 @@ package-neutralino:
 
 package-neutralino-debug:
   stage: export-neutralino
+  <<: *only_master_and_all_mrs
   extends: package-neutralino
   variables:
     SCALENODE_RAM: 8192
@@ -115,6 +126,7 @@ package-neutralino-debug:
 
 deploy_docs:
   stage: docs
+  <<: *only_master_and_all_mrs
   tags: ['docs']
   image: busybox:latest
   when: always
