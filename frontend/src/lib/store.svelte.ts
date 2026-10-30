@@ -13,6 +13,7 @@ export type PanelType =
   | 'Documentation'
   | 'User preferences'
   | 'Color theme'
+  | 'SPI'
   | 'Empty';
 export type SocketInitializerFn = (wsURL: string, name: string) => Promise<Socket>;
 export type SocketMessageData = string | ArrayBuffer;
@@ -84,6 +85,8 @@ export const waitForNoTerminalsLoading = async () => {
 };
 
 export const openDisplaysManager = new SvelteMap<string, { [display: string]: number }>();
+
+export const openSpisManager = new SvelteMap<string, { [spi: string]: number }>();
 
 export const RENODE_WS_PORT = { value: 21234 };
 

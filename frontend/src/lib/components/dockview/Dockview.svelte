@@ -9,6 +9,7 @@
     getRenodeWSManager,
     openDisplaysManager,
     openPanelsManager,
+    openSpisManager,
     RENODE_WS_PORT,
     ACTIONS_MANAGER,
     setRenodeWSManager,
@@ -378,6 +379,7 @@
     getRenodeWSManager()?.dispose();
     openPanelsManager.clear();
     openDisplaysManager.clear();
+    openSpisManager.clear();
     clearTerminalsLoadingCounter();
     dockview?.dispose();
   });

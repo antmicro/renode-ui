@@ -37,6 +37,7 @@
       {@render GroupItem('UARTs', ArrowRightLeft)}
       {@render GroupItem('Sensors', Radio)}
       {@render GroupItem('Displays', Monitor)}
+      {@render GroupItem('SPI', ArrowRightLeft)}
     </div>
   </div>
 </div>

@@ -1,12 +1,18 @@
 import { createDockview, type AddPanelPositionOptions, type DockviewApi } from 'dockview-core';
 import { Panel } from './Panel';
 import { Tab } from './Tab';
-import { RenodeProxySession, type EmptyEventCallback, type UartOpenedArgs } from 'renode-ws-api';
+import {
+  RenodeProxySession,
+  type EmptyEventCallback,
+  type UartOpenedArgs,
+  type SpiOpenedArgs,
+} from 'renode-ws-api';
 import {
   getRenodeWSManager,
   incrementLoadingTerminalsAmount,
   openDisplaysManager,
   openPanelsManager,
+  openSpisManager,
   RENODE_WS_PORT,
   TERMINALS,
   waitForNoTerminalsLoading,
@@ -55,10 +61,11 @@ interface CreatePanelArgs {
   keepFocus?: boolean;
 }
 
-const DEFAULT_PANEL_DIRECTION: Record<string, { direction: string }> = {
+const DEFAULT_PANEL_DIRECTION: Partial<Record<PanelType, { direction: string }>> = {
   'Renode Logs': { direction: 'below' },
   UARTs: { direction: 'right' },
   Displays: { direction: 'right' },
+  SPI: { direction: 'right' },
 };
 
 export const createPanel = async ({
@@ -133,6 +140,25 @@ export const createUartAndSensorPanels = async ({
   });
 };
 
+export const createSpiPanel = async ({
+  dockview,
+  spiArgs,
+}: {
+  dockview: DockviewApi;
+  spiArgs: SpiOpenedArgs;
+}) => {
+  openSpisManager.set(spiArgs.machineName, {
+    ...openSpisManager.get(spiArgs.machineName),
+    [spiArgs.name]: spiArgs.port,
+  });
+  await createPanel({
+    dockview,
+    panelType: 'SPI',
+    predefinedMachine: spiArgs.machineName,
+    predefinedPeripheral: spiArgs.name,
+  });
+};
+
 export const registerWSProxyCallbacks = ({
   dockview,
   onQuit,
@@ -164,7 +190,7 @@ export const registerWSProxyCallbacks = ({
     const idsToRemove = [];
 
     for (const [id, type] of openPanelsManager.entries()) {
-      if (type === 'UARTs' || type === 'Sensors' || type === 'Displays') {
+      if (type === 'UARTs' || type === 'Sensors' || type === 'Displays' || type === 'SPI') {
         const panel = dockview.getPanel(id);
         if (panel) {
           dockview.removePanel(panel);
@@ -178,7 +204,9 @@ export const registerWSProxyCallbacks = ({
     }
 
     openDisplaysManager.clear();
+    openSpisManager.clear();
   });
+  ws.registerSpiOpenedCallback(async (e) => createSpiPanel({ dockview, spiArgs: e }));
 };
 
 export const focusMonitor = (dockview: DockviewApi) => {

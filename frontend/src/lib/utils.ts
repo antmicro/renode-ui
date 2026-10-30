@@ -13,6 +13,7 @@ import UART from './components/panels/UART.svelte';
 import Empty from './components/panels/Empty.svelte';
 import Sensors from './components/panels/sensors/Sensors.svelte';
 import Display from './components/panels/display/Display.svelte';
+import SPI from './components/panels/SPI.svelte';
 
 export const typeToIcon = (t: PanelType): typeof Icon => {
   switch (t) {
@@ -28,6 +29,8 @@ export const typeToIcon = (t: PanelType): typeof Icon => {
       return Monitor;
     case 'Empty':
       return SquareMousePointer;
+    case 'SPI':
+      return ArrowRightLeft;
     default:
       throw new Error(`unknown icon type: ${t}`);
   }
@@ -46,6 +49,8 @@ export const typeToComponent = (t: string) => {
       return Display;
     case 'Empty':
       return Empty;
+    case 'SPI':
+      return SPI;
   }
 };
 
@@ -64,6 +69,8 @@ export const typeToEndpoint = (
       return `/uart/${encodeURIComponent(machine!)}/${encodeURIComponent(uart!)}`;
     case 'Displays':
       return `/display/${port}`;
+    case 'SPI':
+      return `/spiAnalyzer/${port}`;
     default:
       console.error(`undefined port for type: ${t}`);
       return '';
