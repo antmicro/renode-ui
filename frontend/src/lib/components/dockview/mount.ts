@@ -5,6 +5,7 @@ import {
   RenodeProxySession,
   type EmptyEventCallback,
   type UartOpenedArgs,
+  type CanOpenedArgs,
   type SpiOpenedArgs,
 } from 'renode-ws-api';
 import {
@@ -12,6 +13,7 @@ import {
   incrementLoadingTerminalsAmount,
   openDisplaysManager,
   openPanelsManager,
+  openCansManager,
   openSpisManager,
   RENODE_WS_PORT,
   TERMINALS,
@@ -66,6 +68,7 @@ const DEFAULT_PANEL_DIRECTION: Partial<Record<PanelType, { direction: string }>>
   UARTs: { direction: 'right' },
   Displays: { direction: 'right' },
   SPI: { direction: 'right' },
+  CAN: { direction: 'right' },
 };
 
 export const createPanel = async ({
@@ -140,6 +143,21 @@ export const createUartAndSensorPanels = async ({
   });
 };
 
+export const createCanPanel = async ({
+  dockview,
+  canArgs,
+}: {
+  dockview: DockviewApi;
+  canArgs: CanOpenedArgs;
+}) => {
+  openCansManager.set(canArgs.hubName, canArgs.port);
+  await createPanel({
+    dockview,
+    panelType: 'CAN',
+    predefinedPeripheral: canArgs.hubName,
+  });
+};
+
 export const createSpiPanel = async ({
   dockview,
   spiArgs,
@@ -185,12 +203,19 @@ export const registerWSProxyCallbacks = ({
       predefinedDisplay: e.name,
     });
   });
+  ws.registerCanOpenedCallback(async (e) => createCanPanel({ dockview, canArgs: e }));
   ws.registerLedStateChangedCallback(() => {});
   ws.registerClearCommandCallback(() => {
     const idsToRemove = [];
 
     for (const [id, type] of openPanelsManager.entries()) {
-      if (type === 'UARTs' || type === 'Sensors' || type === 'Displays' || type === 'SPI') {
+      if (
+        type === 'UARTs' ||
+        type === 'Sensors' ||
+        type === 'Displays' ||
+        type === 'CAN' ||
+        type === 'SPI'
+      ) {
         const panel = dockview.getPanel(id);
         if (panel) {
           dockview.removePanel(panel);
@@ -204,6 +229,7 @@ export const registerWSProxyCallbacks = ({
     }
 
     openDisplaysManager.clear();
+    openCansManager.clear();
     openSpisManager.clear();
   });
   ws.registerSpiOpenedCallback(async (e) => createSpiPanel({ dockview, spiArgs: e }));

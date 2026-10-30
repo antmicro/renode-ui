@@ -3,6 +3,7 @@ import {
   ArrowRightLeft,
   Logs,
   Monitor,
+  PaintBucket,
   Radio,
   SquareMousePointer,
   SquareTerminal,
@@ -13,6 +14,7 @@ import UART from './components/panels/UART.svelte';
 import Empty from './components/panels/Empty.svelte';
 import Sensors from './components/panels/sensors/Sensors.svelte';
 import Display from './components/panels/display/Display.svelte';
+import CAN from './components/panels/CAN.svelte';
 import SPI from './components/panels/SPI.svelte';
 
 export const typeToIcon = (t: PanelType): typeof Icon => {
@@ -29,6 +31,8 @@ export const typeToIcon = (t: PanelType): typeof Icon => {
       return Monitor;
     case 'Empty':
       return SquareMousePointer;
+    case 'CAN':
+      return PaintBucket;
     case 'SPI':
       return ArrowRightLeft;
     default:
@@ -47,6 +51,8 @@ export const typeToComponent = (t: string) => {
       return Sensors;
     case 'Displays':
       return Display;
+    case 'CAN':
+      return CAN;
     case 'Empty':
       return Empty;
     case 'SPI':
@@ -69,6 +75,8 @@ export const typeToEndpoint = (
       return `/uart/${encodeURIComponent(machine!)}/${encodeURIComponent(uart!)}`;
     case 'Displays':
       return `/display/${port}`;
+    case 'CAN':
+      return `/can/${port}`;
     case 'SPI':
       return `/spiAnalyzer/${port}`;
     default:

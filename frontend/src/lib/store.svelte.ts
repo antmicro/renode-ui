@@ -13,6 +13,7 @@ export type PanelType =
   | 'Documentation'
   | 'User preferences'
   | 'Color theme'
+  | 'CAN'
   | 'SPI'
   | 'Empty';
 export type SocketInitializerFn = (wsURL: string, name: string) => Promise<Socket>;
@@ -85,6 +86,8 @@ export const waitForNoTerminalsLoading = async () => {
 };
 
 export const openDisplaysManager = new SvelteMap<string, { [display: string]: number }>();
+
+export const openCansManager = new SvelteMap<string, number>();
 
 export const openSpisManager = new SvelteMap<string, { [spi: string]: number }>();
 
