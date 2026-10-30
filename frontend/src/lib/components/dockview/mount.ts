@@ -49,7 +49,7 @@ interface CreatePanelArgs {
   panelType: PanelType;
   port?: number;
   predefinedMachine?: string;
-  predefinedUart?: string;
+  predefinedPeripheral?: string;
   predefinedDisplay?: string;
   position?: AddPanelPositionOptions;
   keepFocus?: boolean;
@@ -66,7 +66,7 @@ export const createPanel = async ({
   panelType,
   port,
   predefinedMachine,
-  predefinedUart,
+  predefinedPeripheral,
   predefinedDisplay,
   position,
   keepFocus = false,
@@ -80,7 +80,13 @@ export const createPanel = async ({
     component: panelType,
     position: position ?? DEFAULT_PANEL_DIRECTION[panelType],
     tabComponent: 'default',
-    params: { panelType: panelType, port, predefinedMachine, predefinedUart, predefinedDisplay },
+    params: {
+      panelType: panelType,
+      port,
+      predefinedMachine,
+      predefinedPeripheral,
+      predefinedDisplay,
+    },
   });
 
   incrementLoadingTerminalsAmount();
@@ -123,7 +129,7 @@ export const createUartAndSensorPanels = async ({
     dockview,
     panelType: 'UARTs',
     predefinedMachine: uartArgs.machineName,
-    predefinedUart: uartArgs.name,
+    predefinedPeripheral: uartArgs.name,
   });
 };
 

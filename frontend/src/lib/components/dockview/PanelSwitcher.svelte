@@ -7,7 +7,7 @@
     panelType: PanelType;
     port?: number;
     predefinedMachine?: string;
-    predefinedUart?: string;
+    predefinedPeripheral?: string;
     predefinedDisplay?: string;
   }
 

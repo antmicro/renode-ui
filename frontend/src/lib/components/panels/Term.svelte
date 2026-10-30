@@ -14,9 +14,9 @@
     panelType: PanelType;
     api: DockviewPanelApi;
     predefinedMachine?: string;
-    predefinedUart?: string;
+    predefinedPeripheral?: string;
   }
-  const { panelType, predefinedMachine, predefinedUart, api }: Props = $props();
+  const { panelType, predefinedMachine, predefinedPeripheral, api }: Props = $props();
 
   const wsManager = getRenodeWSManager();
 
@@ -60,7 +60,7 @@
 <div
   data-test-id={panelType}
   class="hterm-install-point"
-  {@attach installHterm(panelType, predefinedMachine, predefinedUart)}
+  {@attach installHterm(panelType, predefinedMachine, predefinedPeripheral)}
 ></div>
 
 <style>

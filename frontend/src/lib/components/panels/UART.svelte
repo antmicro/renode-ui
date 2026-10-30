@@ -9,11 +9,11 @@
   interface Props {
     panelType: PanelType;
     predefinedMachine?: string;
-    predefinedUart?: string;
+    predefinedPeripheral?: string;
     api: DockviewPanelApi;
   }
 
-  const { panelType, predefinedMachine = null, predefinedUart = null, api }: Props = $props();
+  const { panelType, predefinedMachine = null, predefinedPeripheral = null, api }: Props = $props();
 
   let machines: string[] = $state([]);
   let uarts = new SvelteMap<string, string[]>();
@@ -21,7 +21,7 @@
   // svelte-ignore state_referenced_locally - tab props do not change
   let selectedMachine = $state(predefinedMachine);
   // svelte-ignore state_referenced_locally - tab props do not change
-  let selectedUART = $state(predefinedUart);
+  let selectedUART = $state(predefinedPeripheral);
 
   const availableMachinesAndUARTS = async () => {
     machines = await getRenodeWSManager().getMachines();
@@ -55,7 +55,7 @@
             {api}
             {panelType}
             predefinedMachine={selectedMachine}
-            predefinedUart={selectedUART}
+            predefinedPeripheral={selectedUART}
           />
         {/key}
       {:else}
