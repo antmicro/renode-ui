@@ -5,13 +5,13 @@
   import { onDestroy, onMount } from 'svelte';
 
   interface Props {
-    port: number;
+    machine: string;
     name: string;
     mode: string;
     info?: string;
   }
 
-  let { port, name, mode, info = $bindable('') }: Props = $props();
+  let { machine, name, mode, info = $bindable('') }: Props = $props();
 
   let canvas: HTMLCanvasElement;
   let socket: Socket | undefined;
@@ -42,7 +42,7 @@
   };
 
   onMount(async () => {
-    const s = await openSocket(typeToWsURL('Displays', port), name);
+    const s = await openSocket(typeToWsURL('Displays', undefined, machine, name), name);
     if (destroyed) {
       s.close();
       return;

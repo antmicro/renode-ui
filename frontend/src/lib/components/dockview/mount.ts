@@ -191,14 +191,13 @@ export const registerWSProxyCallbacks = ({
   }
   ws.registerUartOpenedCallback(async (e) => createUartAndSensorPanels({ dockview, uartArgs: e }));
   ws.registerDisplayOpenedCallback(async (e) => {
-    openDisplaysManager.set(e.machineName, {
-      ...openDisplaysManager.get(e.machineName),
-      [e.name]: e.port,
-    });
+    const displays = openDisplaysManager.get(e.machineName) ?? [];
+    if (!displays.includes(e.name)) {
+      openDisplaysManager.set(e.machineName, [...displays, e.name]);
+    }
     await createPanel({
       dockview,
       panelType: 'Displays',
-      port: e.port,
       predefinedMachine: e.machineName,
       predefinedDisplay: e.name,
     });

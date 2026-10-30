@@ -30,7 +30,7 @@
         <Select header="Machine selection" items={machines} bind:selectedItem={selectedMachine} />
         <Select
           header="Display selection"
-          items={Object.keys(openDisplaysManager.get(selectedMachine) ?? {})}
+          items={openDisplaysManager.get(selectedMachine) ?? []}
           bind:selectedItem={selectedDisplay}
         />
         <Select
@@ -41,10 +41,9 @@
       </div>
       <div class="info">{info}</div>
     </div>
-    {@const port = openDisplaysManager.get(selectedMachine)?.[selectedDisplay]}
-    {#if port}
+    {#if selectedDisplay && openDisplaysManager.get(selectedMachine)?.includes(selectedDisplay)}
       {#key [selectedDisplay, selectedMachine]}
-        <DisplayView {port} name={selectedDisplay} {mode} bind:info />
+        <DisplayView machine={selectedMachine!} name={selectedDisplay} {mode} bind:info />
       {/key}
     {:else}
       <div class="empty">Select machine and display</div>

@@ -85,7 +85,7 @@ export const waitForNoTerminalsLoading = async () => {
   }
 };
 
-export const openDisplaysManager = new SvelteMap<string, { [display: string]: number }>();
+export const openDisplaysManager = new SvelteMap<string, string[]>();
 
 export const openCansManager = new SvelteMap<string, number>();
 

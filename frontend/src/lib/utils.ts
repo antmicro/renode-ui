@@ -64,7 +64,7 @@ export const typeToEndpoint = (
   t: string,
   port?: number,
   machine?: string,
-  uart?: string,
+  peripheral?: string,
 ): string => {
   switch (t) {
     case 'Monitor':
@@ -72,21 +72,26 @@ export const typeToEndpoint = (
     case 'Renode Logs':
       return '/logs';
     case 'UARTs':
-      return `/uart/${encodeURIComponent(machine!)}/${encodeURIComponent(uart!)}`;
+      return `/uart/${encodeURIComponent(machine!)}/${encodeURIComponent(peripheral!)}`;
     case 'Displays':
-      return `/display/${port}`;
+      return `/display/${encodeURIComponent(machine!)}/${encodeURIComponent(peripheral!)}`;
     case 'CAN':
       return `/can/${port}`;
     case 'SPI':
       return `/spiAnalyzer/${port}`;
     default:
-      console.error(`undefined port for type: ${t}`);
+      console.error(`undefined endpoint for type: ${t}`);
       return '';
   }
 };
 
-export const typeToWsURL = (t: string, port?: number, machine?: string, uart?: string): string =>
-  `ws://localhost:${RENODE_WS_PORT.value}${typeToEndpoint(t, port, machine, uart)}`;
+export const typeToWsURL = (
+  t: string,
+  port?: number,
+  machine?: string,
+  peripheral?: string,
+): string =>
+  `ws://localhost:${RENODE_WS_PORT.value}${typeToEndpoint(t, port, machine, peripheral)}`;
 
 export const cssStringify = (obj: { [key: string]: string }): string => {
   return Object.keys(obj)
