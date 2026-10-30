@@ -73,3 +73,15 @@ test("test running script, open display and close it by typing 'Clear' command",
   await expect(displayBtn).toHaveCount(0);
   await expect(page.locator('.display-main')).toHaveCount(0);
 });
+
+test('test display endpoint is stable across emulation reloads', async ({
+  page,
+  fixtures: { monitor },
+}) => {
+  for (let i = 0; i < 2; i++) {
+    const socket = page.waitForEvent('websocket', (ws) => ws.url().includes('/display/'));
+    await enterCommand(monitor, 's @scripts/single-node/stm32f746.resc');
+    expect((await socket).url()).toMatch(/\/display\/STM32F746\/sysbus\.ltdc$/);
+    await enterCommand(monitor, 'Clear');
+  }
+});
