@@ -3,7 +3,7 @@ import {
   ArrowRightLeft,
   Logs,
   Monitor,
-  PaintBucket,
+  GitFork,
   Radio,
   SquareMousePointer,
   SquareTerminal,
@@ -32,7 +32,7 @@ export const typeToIcon = (t: PanelType): typeof Icon => {
     case 'Empty':
       return SquareMousePointer;
     case 'CAN':
-      return PaintBucket;
+      return GitFork;
     case 'SPI':
       return ArrowRightLeft;
     default:
