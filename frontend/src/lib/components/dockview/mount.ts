@@ -114,7 +114,6 @@ export const registerWSProxy = async () => {
     `ws://localhost:${RENODE_WS_PORT.value}/proxy`,
     '',
   );
-  await ws.startRenode();
 
   return ws;
 };
