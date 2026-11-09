@@ -180,9 +180,11 @@ export const createSpiPanel = async ({
 export const registerWSProxyCallbacks = ({
   dockview,
   onQuit,
+  ignoreOpenedEvents,
 }: {
   dockview: DockviewApi;
   onQuit?: EmptyEventCallback;
+  ignoreOpenedEvents: boolean;
 }) => {
   const ws = getRenodeWSManager();
 

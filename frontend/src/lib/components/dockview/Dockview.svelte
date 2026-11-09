@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from '$app/state';
   import '$lib/assets/shared.css';
   import 'dockview-core/dist/styles/dockview.css';
   import './themeOverride.css';
@@ -47,6 +48,16 @@
     loadingMessage?: string;
     runInCloud?: RunInCloudProps;
     renodePort?: number;
+  }
+
+  type ViewMode = 'Widget' | 'Workbench';
+
+  interface ParamsDto {
+    mode?: ViewMode;
+    ignoreOpenedEvents?: boolean;
+    panelType?: PanelType;
+    machine?: string;
+    peripheral?: string;
   }
 
   let { style, loadingMessage, onError, onLoad, onQuit, runInCloud, renodePort }: Props = $props();
@@ -316,8 +327,39 @@
     );
   };
 
+  const createWidgetUI = async (params: ParamsDto, dockview: DockviewApi) => {
+    await createPanel({
+      panelType: params.panelType!,
+      dockview,
+      predefinedMachine: params.machine,
+      predefinedPeripheral: params.peripheral,
+    });
+  };
+
+  const createWorkbenchUI = async (params: ParamsDto, dockview: DockviewApi) => {
+    await createPanel({ panelType: 'Monitor', dockview });
+    await createPanel({ panelType: 'Renode Logs', dockview });
+  };
+
+  const getParams = (): ParamsDto => {
+    const searchParams = Object.fromEntries(page.url.searchParams) as ParamsDto;
+
+    const webviewParams = (
+      typeof WEBVIEW_PARAMS !== 'undefined' ? WEBVIEW_PARAMS : undefined
+    ) as ParamsDto;
+
+    const params = webviewParams ?? searchParams ?? {};
+
+    params.mode ??= 'Workbench';
+    params.panelType ??= 'Monitor';
+    params.ignoreOpenedEvents ??= params.mode == 'Widget' ? true : false;
+
+    return params;
+  };
+
   const createUI = async () => {
     try {
+      const params = getParams();
       loadingError = null;
 
       const proxyInitializer =
@@ -344,15 +386,26 @@
       }
 
       dockview = createDockviewApi(dockElement);
-      registerWSProxyCallbacks({ dockview, onQuit });
+      registerWSProxyCallbacks({
+        dockview,
+        onQuit,
+        ignoreOpenedEvents: params.ignoreOpenedEvents!,
+      });
 
-      await createPanel({ panelType: 'Monitor', dockview });
-      await createPanel({ panelType: 'Renode Logs', dockview });
-
-      const uartArgs = await runInCloud?.getRestoreState?.();
-      if (uartArgs) {
-        await createUartAndSensorPanels({ dockview, uartArgs });
+      switch (params.mode) {
+        case 'Widget':
+          await createWidgetUI(params, dockview);
+          break;
+        case 'Workbench':
+        default:
+          await createWorkbenchUI(params, dockview);
+          const uartArgs = await runInCloud?.getRestoreState?.();
+          if (uartArgs) {
+            await createUartAndSensorPanels({ dockview, uartArgs });
+          }
+          break;
       }
+
       registerActions(dockview);
 
       dockview.onDidRemovePanel((panel) => {
