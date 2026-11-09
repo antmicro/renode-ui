@@ -5,6 +5,7 @@ import {
   RenodeProxySession,
   type EmptyEventCallback,
   type UartOpenedArgs,
+  type DisplayOpenedArgs,
   type CanOpenedArgs,
   type SpiOpenedArgs,
 } from 'renode-ws-api';
@@ -143,6 +144,25 @@ export const createUartAndSensorPanels = async ({
   });
 };
 
+export const createDisplayPanel = async ({
+  dockview,
+  displayArgs,
+}: {
+  dockview: DockviewApi;
+  displayArgs: DisplayOpenedArgs;
+}) => {
+  const displays = openDisplaysManager.get(displayArgs.machineName) ?? [];
+  if (!displays.includes(displayArgs.name)) {
+    openDisplaysManager.set(displayArgs.machineName, [...displays, displayArgs.name]);
+  }
+  await createPanel({
+    dockview,
+    panelType: 'Displays',
+    predefinedMachine: displayArgs.machineName,
+    predefinedDisplay: displayArgs.name,
+  });
+};
+
 export const createCanPanel = async ({
   dockview,
   canArgs,
@@ -191,21 +211,7 @@ export const registerWSProxyCallbacks = ({
   if (onQuit) {
     ws.registerRenodeQuittedCallback(onQuit);
   }
-  ws.registerUartOpenedCallback(async (e) => createUartAndSensorPanels({ dockview, uartArgs: e }));
-  ws.registerDisplayOpenedCallback(async (e) => {
-    const displays = openDisplaysManager.get(e.machineName) ?? [];
-    if (!displays.includes(e.name)) {
-      openDisplaysManager.set(e.machineName, [...displays, e.name]);
-    }
-    await createPanel({
-      dockview,
-      panelType: 'Displays',
-      predefinedMachine: e.machineName,
-      predefinedDisplay: e.name,
-    });
-  });
-  ws.registerCanOpenedCallback(async (e) => createCanPanel({ dockview, canArgs: e }));
-  ws.registerLedStateChangedCallback(() => {});
+
   ws.registerClearCommandCallback(() => {
     const idsToRemove = [];
 
@@ -233,7 +239,22 @@ export const registerWSProxyCallbacks = ({
     openCansManager.clear();
     openSpisManager.clear();
   });
-  ws.registerSpiOpenedCallback(async (e) => createSpiPanel({ dockview, spiArgs: e }));
+
+  ws.registerLedStateChangedCallback(() => {});
+
+  if (ignoreOpenedEvents) {
+    ws.registerUartOpenedCallback(() => {});
+    ws.registerDisplayOpenedCallback(() => {});
+    ws.registerCanOpenedCallback(() => {});
+    ws.registerSpiOpenedCallback(() => {});
+  } else {
+    ws.registerUartOpenedCallback(async (e) =>
+      createUartAndSensorPanels({ dockview, uartArgs: e }),
+    );
+    ws.registerDisplayOpenedCallback(async (e) => createDisplayPanel({ dockview, displayArgs: e }));
+    ws.registerCanOpenedCallback(async (e) => createCanPanel({ dockview, canArgs: e }));
+    ws.registerSpiOpenedCallback(async (e) => createSpiPanel({ dockview, spiArgs: e }));
+  }
 };
 
 export const focusMonitor = (dockview: DockviewApi) => {
