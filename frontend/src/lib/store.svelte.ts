@@ -1,5 +1,5 @@
 import type { RenodeProxySession } from 'renode-ws-api';
-import { SvelteMap } from 'svelte/reactivity';
+import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 import { SocketConsole, type ExtendedHterm } from './components/panels/ExtendedHterm';
 import { ActionsManager, MacroParser } from './actions.svelte';
 import { KeyboardManager } from './keyboard.svelte';
@@ -111,7 +111,7 @@ export const waitForNoTerminalsLoading = async () => {
 
 export const openDisplaysManager = new SvelteMap<string, string[]>();
 
-export const openCansManager = new SvelteMap<string, number>();
+export const openCansManager = new SvelteSet<string>();
 
 export const openSpisManager = new SvelteMap<string, string[]>();
 

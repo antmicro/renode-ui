@@ -52,7 +52,7 @@
     renderRows.clear();
     if (!machine || !controller || !controllers.includes(controller)) return;
 
-    const wsURL = typeToWsURL(panelType, undefined, machine, controller);
+    const wsURL = typeToWsURL(panelType, machine, controller);
     const socket = new WebSocket(wsURL); /* FIXME: reuse socket if several panels are opened */
     socket.binaryType = 'arraybuffer';
 

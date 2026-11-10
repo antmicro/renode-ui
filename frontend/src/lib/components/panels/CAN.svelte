@@ -57,18 +57,16 @@
 
   const renderRows = createBatchedRows();
 
-  const hubs = $derived([...openCansManager.keys()]);
+  const hubs = $derived([...openCansManager]);
 
   // svelte-ignore state_referenced_locally - tab props do not change
   let hub: string | null = $state(predefinedPeripheral);
 
-  const activePort = $derived(hub ? openCansManager.get(hub) : undefined);
-
   $effect(() => {
     renderRows.clear();
-    if (activePort === undefined) return;
+    if (!hub || !openCansManager.has(hub)) return;
 
-    const wsURL = typeToWsURL(panelType, activePort);
+    const wsURL = typeToWsURL(panelType, undefined, hub);
     const socket = new WebSocket(wsURL);
     socket.binaryType = 'arraybuffer';
 

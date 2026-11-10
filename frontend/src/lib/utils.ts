@@ -60,12 +60,7 @@ export const typeToComponent = (t: string) => {
   }
 };
 
-export const typeToEndpoint = (
-  t: string,
-  port?: number,
-  machine?: string,
-  peripheral?: string,
-): string => {
+export const typeToEndpoint = (t: string, machine?: string, peripheral?: string): string => {
   switch (t) {
     case 'Monitor':
       return '/monitor';
@@ -76,7 +71,7 @@ export const typeToEndpoint = (
     case 'Displays':
       return `/display/${encodeURIComponent(machine!)}/${encodeURIComponent(peripheral!)}`;
     case 'CAN':
-      return `/can/${port}`;
+      return `/can/${encodeURIComponent(peripheral!)}`;
     case 'SPI':
       return `/spi/${encodeURIComponent(machine!)}/${encodeURIComponent(peripheral!)}`;
     default:
@@ -85,13 +80,8 @@ export const typeToEndpoint = (
   }
 };
 
-export const typeToWsURL = (
-  t: string,
-  port?: number,
-  machine?: string,
-  peripheral?: string,
-): string =>
-  `ws://localhost:${RENODE_WS_PORT.value}${typeToEndpoint(t, port, machine, peripheral)}`;
+export const typeToWsURL = (t: string, machine?: string, peripheral?: string): string =>
+  `ws://localhost:${RENODE_WS_PORT.value}${typeToEndpoint(t, machine, peripheral)}`;
 
 export const cssStringify = (obj: { [key: string]: string }): string => {
   return Object.keys(obj)

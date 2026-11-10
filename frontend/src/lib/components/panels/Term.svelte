@@ -22,7 +22,7 @@
 
   export const installHterm = (panelType: PanelType, machine?: string, uart?: string) => {
     return (element: HTMLElement) => {
-      const termEndpoint = typeToEndpoint(panelType, undefined, machine, uart);
+      const termEndpoint = typeToEndpoint(panelType, machine, uart);
       const term = new ExtendedHterm({
         profileId: panelType,
         interactible: panelType === 'Monitor' || panelType === 'UARTs',
@@ -41,7 +41,7 @@
         }
       });
 
-      const wsURL = typeToWsURL(panelType, undefined, machine, uart);
+      const wsURL = typeToWsURL(panelType, machine, uart);
       getSocketConsole(wsURL, uart !== undefined ? `Analyzer (${uart})` : panelType)
         .then((con) => term.install(element, con))
         .then(() => {

@@ -5,7 +5,6 @@
 
   interface Props {
     panelType: PanelType;
-    port?: number;
     predefinedMachine?: string;
     predefinedPeripheral?: string;
   }

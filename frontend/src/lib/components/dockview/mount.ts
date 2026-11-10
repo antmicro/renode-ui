@@ -56,7 +56,6 @@ export const createDockviewApi = (node: HTMLElement) => {
 interface CreatePanelArgs {
   dockview: DockviewApi;
   panelType: PanelType;
-  port?: number;
   predefinedMachine?: string;
   predefinedPeripheral?: string;
   position?: AddPanelPositionOptions;
@@ -74,7 +73,6 @@ const DEFAULT_PANEL_DIRECTION: Partial<Record<PanelType, { direction: string }>>
 export const createPanel = async ({
   dockview,
   panelType,
-  port,
   predefinedMachine,
   predefinedPeripheral,
   position,
@@ -91,7 +89,6 @@ export const createPanel = async ({
     tabComponent: 'default',
     params: {
       panelType: panelType,
-      port,
       predefinedMachine,
       predefinedPeripheral,
     },
@@ -166,7 +163,7 @@ export const createCanPanel = async ({
   dockview: DockviewApi;
   canArgs: CanOpenedArgs;
 }) => {
-  openCansManager.set(canArgs.hubName, canArgs.port);
+  openCansManager.add(canArgs.hubName);
   await createPanel({
     dockview,
     panelType: 'CAN',

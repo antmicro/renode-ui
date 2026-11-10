@@ -42,7 +42,7 @@
   };
 
   onMount(async () => {
-    const s = await openSocket(typeToWsURL('Displays', undefined, machine, name), name);
+    const s = await openSocket(typeToWsURL('Displays', machine, name), name);
     if (destroyed) {
       s.close();
       return;

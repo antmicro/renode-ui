@@ -25,11 +25,10 @@ export class Panel implements IContentRenderer {
   }
 
   init(parameters: GroupPanelPartInitParameters): void {
-    const { panelType, port, predefinedMachine, predefinedPeripheral } = parameters.params;
+    const { panelType, predefinedMachine, predefinedPeripheral } = parameters.params;
 
     this.currentProps = {
       panelType,
-      port,
       api: parameters.api,
       predefinedMachine,
       predefinedPeripheral,
