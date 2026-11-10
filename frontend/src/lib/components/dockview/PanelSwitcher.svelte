@@ -8,7 +8,6 @@
     port?: number;
     predefinedMachine?: string;
     predefinedPeripheral?: string;
-    predefinedDisplay?: string;
   }
 
   const props: Props = $props();

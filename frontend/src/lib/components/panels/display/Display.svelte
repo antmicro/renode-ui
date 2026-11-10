@@ -6,17 +6,17 @@
 
   interface Props {
     predefinedMachine?: string;
-    predefinedDisplay?: string;
+    predefinedPeripheral?: string;
   }
 
-  const { predefinedMachine = null, predefinedDisplay = null }: Props = $props();
+  const { predefinedMachine = null, predefinedPeripheral = null }: Props = $props();
 
   const machines = $derived([...openDisplaysManager.keys()]);
 
   // svelte-ignore state_referenced_locally - tab props do not change
   let selectedMachine = $state(predefinedMachine);
   // svelte-ignore state_referenced_locally - tab props do not change
-  let selectedDisplay = $state(predefinedDisplay);
+  let selectedDisplay = $state(predefinedPeripheral);
   let info = $state('');
   let mode = $state('Fit');
 

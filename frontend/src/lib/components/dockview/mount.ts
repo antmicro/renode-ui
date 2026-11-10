@@ -59,7 +59,6 @@ interface CreatePanelArgs {
   port?: number;
   predefinedMachine?: string;
   predefinedPeripheral?: string;
-  predefinedDisplay?: string;
   position?: AddPanelPositionOptions;
   keepFocus?: boolean;
 }
@@ -78,7 +77,6 @@ export const createPanel = async ({
   port,
   predefinedMachine,
   predefinedPeripheral,
-  predefinedDisplay,
   position,
   keepFocus = false,
 }: CreatePanelArgs) => {
@@ -96,7 +94,6 @@ export const createPanel = async ({
       port,
       predefinedMachine,
       predefinedPeripheral,
-      predefinedDisplay,
     },
   });
 
@@ -158,7 +155,7 @@ export const createDisplayPanel = async ({
     dockview,
     panelType: 'Displays',
     predefinedMachine: displayArgs.machineName,
-    predefinedDisplay: displayArgs.name,
+    predefinedPeripheral: displayArgs.name,
   });
 };
 

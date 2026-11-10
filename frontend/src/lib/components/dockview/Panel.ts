@@ -25,8 +25,7 @@ export class Panel implements IContentRenderer {
   }
 
   init(parameters: GroupPanelPartInitParameters): void {
-    const { panelType, port, predefinedMachine, predefinedPeripheral, predefinedDisplay } =
-      parameters.params;
+    const { panelType, port, predefinedMachine, predefinedPeripheral } = parameters.params;
 
     this.currentProps = {
       panelType,
@@ -34,7 +33,6 @@ export class Panel implements IContentRenderer {
       api: parameters.api,
       predefinedMachine,
       predefinedPeripheral,
-      predefinedDisplay,
     };
 
     this.mountHandle = mount(PanelSwitcher, {
