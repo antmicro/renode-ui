@@ -46,16 +46,13 @@
   // svelte-ignore state_referenced_locally - tab props do not change
   let controller: string | null = $state(predefinedPeripheral);
 
-  const controllers = $derived(machine ? Object.keys(openSpisManager.get(machine) ?? {}) : []);
-  const activePort = $derived(
-    machine && controller ? openSpisManager.get(machine)?.[controller] : undefined,
-  );
+  const controllers = $derived(machine ? (openSpisManager.get(machine) ?? []) : []);
 
   $effect(() => {
     renderRows.clear();
-    if (activePort === undefined) return;
+    if (!machine || !controller || !controllers.includes(controller)) return;
 
-    const wsURL = typeToWsURL(panelType, activePort);
+    const wsURL = typeToWsURL(panelType, undefined, machine, controller);
     const socket = new WebSocket(wsURL); /* FIXME: reuse socket if several panels are opened */
     socket.binaryType = 'arraybuffer';
 

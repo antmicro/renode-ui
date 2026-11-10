@@ -113,7 +113,7 @@ export const openDisplaysManager = new SvelteMap<string, string[]>();
 
 export const openCansManager = new SvelteMap<string, number>();
 
-export const openSpisManager = new SvelteMap<string, { [spi: string]: number }>();
+export const openSpisManager = new SvelteMap<string, string[]>();
 
 export const RENODE_WS_PORT = { value: 21234 };
 

@@ -78,7 +78,7 @@ export const typeToEndpoint = (
     case 'CAN':
       return `/can/${port}`;
     case 'SPI':
-      return `/spiAnalyzer/${port}`;
+      return `/spi/${encodeURIComponent(machine!)}/${encodeURIComponent(peripheral!)}`;
     default:
       console.error(`undefined endpoint for type: ${t}`);
       return '';

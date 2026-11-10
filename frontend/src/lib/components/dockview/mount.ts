@@ -181,10 +181,10 @@ export const createSpiPanel = async ({
   dockview: DockviewApi;
   spiArgs: SpiOpenedArgs;
 }) => {
-  openSpisManager.set(spiArgs.machineName, {
-    ...openSpisManager.get(spiArgs.machineName),
-    [spiArgs.name]: spiArgs.port,
-  });
+  const spis = openSpisManager.get(spiArgs.machineName) ?? [];
+  if (!spis.includes(spiArgs.name)) {
+    openSpisManager.set(spiArgs.machineName, [...spis, spiArgs.name]);
+  }
   await createPanel({
     dockview,
     panelType: 'SPI',
