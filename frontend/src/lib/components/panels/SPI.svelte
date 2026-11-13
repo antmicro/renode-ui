@@ -18,11 +18,11 @@
   const decoder = new TextDecoder('utf-8');
 
   const columns: Column<SpiExchange>[] = [
-    { header: 'ID', primaryKey: true, width: '100px' },
+    { header: 'ID', primaryKey: true, width: '130px' },
     {
       header: 'Timestamp',
       format: (m) => m.TimeStamp,
-      width: '150px',
+      width: '190px',
     },
     {
       header: 'PICO',

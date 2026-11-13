@@ -26,7 +26,7 @@
     {
       header: 'ID',
       sortable: true,
-      width: '100px',
+      width: '130px',
       format: (f) => f.Message.Id,
       primaryKey: true,
       placeholder: 'id:20',
@@ -34,7 +34,7 @@
     {
       header: 'Timestamp',
       sortable: true,
-      width: '150px',
+      width: '190px',
       format: (f) => f.TimeStamp,
     },
     {
