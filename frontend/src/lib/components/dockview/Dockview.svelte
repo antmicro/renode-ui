@@ -30,6 +30,9 @@
     focusMonitor,
     registerWSProxyCallbacks,
     createUartAndSensorPanels,
+    createDisplayPanel,
+    createCanPanel,
+    createSpiPanel,
   } from './mount';
   import Error from '../loaders/Error.svelte';
   import type { DockviewApi } from 'dockview-core';
@@ -341,12 +344,30 @@
   };
 
   const createWidgetUI = async (params: ParamsDto, dockview: DockviewApi) => {
-    await createPanel({
-      panelType: params.panelType!,
-      dockview,
-      predefinedMachine: params.machine,
-      predefinedPeripheral: params.peripheral,
-    });
+    switch (params.panelType) {
+      case 'Displays':
+        createDisplayPanel({
+          dockview,
+          displayArgs: { name: params.peripheral!, machineName: params.machine! },
+        });
+        break;
+      case 'CAN':
+        createCanPanel({ dockview, canArgs: { hubName: params.peripheral! } });
+        break;
+      case 'SPI':
+        createSpiPanel({
+          dockview,
+          spiArgs: { name: params.peripheral!, machineName: params.machine! },
+        });
+        break;
+      default:
+        await createPanel({
+          panelType: params.panelType!,
+          dockview,
+          predefinedMachine: params.machine,
+          predefinedPeripheral: params.peripheral,
+        });
+    }
   };
 
   const createWorkbenchUI = async (params: ParamsDto, dockview: DockviewApi) => {
