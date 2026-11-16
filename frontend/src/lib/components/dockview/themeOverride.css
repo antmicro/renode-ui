@@ -16,6 +16,10 @@
   --dv-group-view-background-color: #0a0a0a;
 }
 
+.dockview-theme-hide-actions .dv-tabs-and-actions-container {
+  display: none;
+}
+
 .dv-tab {
   padding: 0 !important;
 }

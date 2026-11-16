@@ -35,7 +35,7 @@ const disableNotAllowedOverlay = (dock: DockviewApi) => {
   });
 };
 
-export const createDockviewApi = (node: HTMLElement) => {
+export const createDockviewApi = (node: HTMLElement, hideActions: boolean = false) => {
   const dock = createDockview(node, {
     disableFloatingGroups: true,
     createComponent: () => new Panel(),
@@ -43,7 +43,7 @@ export const createDockviewApi = (node: HTMLElement) => {
     singleTabMode: 'fullwidth',
     theme: {
       name: 'renode-ui',
-      className: 'dockview-theme-renode-ui',
+      className: 'dockview-theme-renode-ui' + (hideActions ? ' dockview-theme-hide-actions' : ''),
     },
     defaultRenderer: 'always',
   });

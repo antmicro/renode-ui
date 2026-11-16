@@ -424,7 +424,7 @@
         setSocketInitializer(runInCloud?.customWsInitializer);
       }
 
-      dockview = createDockviewApi(dockElement);
+      dockview = createDockviewApi(dockElement, params.mode == 'Widget');
       registerWSProxyCallbacks({
         dockview,
         onQuit,
