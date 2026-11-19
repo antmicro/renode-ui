@@ -199,7 +199,11 @@
 
     namespace.registerAction(
       'close',
-      async ({ panelId }: { panelId?: string }) => {
+      async ({ panelId, all }: { panelId?: string, all?: boolean }) => {
+        if (all) {
+          dockview.closeAllGroups()
+        }
+
         let panel = getPanelByIdOrActive(panelId);
 
         let isLastPanel = dockview.totalPanels == 1;
