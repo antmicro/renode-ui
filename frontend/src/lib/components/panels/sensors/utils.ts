@@ -82,26 +82,27 @@ export const machToPeripherals = async (ws: RenodeProxySession | undefined, mach
 const sensorTypeToSensor = async (
   ws: RenodeProxySession | undefined,
   sensor: RenodeSensor,
-  type: SensorType,
+  measurand: SensorType,
 ) => {
-  let sensorValue = await ws?.getSensorValue(sensor, type);
+  let sensorValue = await ws?.getSensorSourceValue(sensor, measurand, 'raw');
   if (!sensorValue) {
     if (
-      type === SensorType.MagneticFluxDensity ||
-      type === SensorType.Acceleration ||
-      type === SensorType.AngularRate
+      measurand === SensorType.MagneticFluxDensity ||
+      measurand === SensorType.Acceleration ||
+      measurand === SensorType.AngularRate
     ) {
       sensorValue = {
         sample: { x: 0, y: 0, z: 0 },
-        unit: typeToUnit(type),
+        unit: typeToUnit(measurand),
       } as SensorValue;
     } else {
-      sensorValue = { sample: '', unit: typeToUnit(type) } as SensorValue;
+      sensorValue = { sample: '', unit: typeToUnit(measurand) } as SensorValue;
     }
   }
 
   return {
-    type: type,
+    measurand: measurand,
+    types: sensor.measurands[measurand]!,
     value: sensorValue,
   };
 };

@@ -94,14 +94,14 @@
     {/if}
     <div class="group-items">
       {#each peripheral.sensors as sensor (sensor)}
-        {@const Icon = sensorTypeToItem[sensor.type].icon}
-        {@const iconText = sensorTypeToItem[sensor.type].text}
+        {@const Icon = sensorTypeToItem[sensor.measurand].icon}
+        {@const iconText = sensorTypeToItem[sensor.measurand].text}
         <div class="group-item">
           <div class="group-item-left">
             <Icon size={16} />
             {iconText}
           </div>
-          {#if sensor.type === 'magnetic-flux-density' || sensor.type === 'acceleration' || sensor.type === 'angular-rate'}
+          {#if sensor.measurand === 'magnetic-flux-density' || sensor.measurand === 'acceleration' || sensor.measurand === 'angular-rate'}
             <div class="pill-group {sensor.error && 'error'}">
               {#each Object.entries(sensor.value.value as object) as [axis, value] (axis)}
                 <div class="pill {sensor.error && 'error'}">

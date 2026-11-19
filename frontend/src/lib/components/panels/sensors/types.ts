@@ -13,7 +13,8 @@ export interface Peripheral {
 }
 
 export interface Sensor {
-  readonly type: string;
+  readonly types: string[];
+  readonly measurand: string;
   readonly error?: boolean;
   value: SensorValue;
 }
