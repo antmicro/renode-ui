@@ -1,3 +1,5 @@
+import { ACTIONS_MANAGER, getRenodeWSManager } from './store.svelte';
+
 export interface Keybinding {
   ctrl: boolean;
   shift: boolean;
@@ -114,6 +116,8 @@ export class KeyboardManager {
     this.registerKeybinding('ctrl-shift-arrowdown', 'node.swap direction:below');
     this.registerKeybinding('ctrl-shift-arrowleft', 'node.swap direction:left');
     this.registerKeybinding('ctrl-shift-arrowright', 'node.swap direction:right');
+
+    this.registerActions();
   }
 
   public attach(target: HTMLElement): () => void {
@@ -185,6 +189,47 @@ export class KeyboardManager {
     }
 
     delete this.bindings[canonical];
+  }
+
+  private registerActions(): void {
+    const namespace = ACTIONS_MANAGER.registerNamespace('keyboard');
+
+    namespace.registerAction(
+      'add-keybinding',
+      async ({
+        action,
+        key,
+        ctrl = false,
+        shift = false,
+        alt = false,
+        meta = false,
+        edge = 'pressed',
+        repeating = false,
+        persistent = true,
+        context = undefined,
+      }: Keybinding & { action: string; repeating: boolean; persistent: boolean }) => {
+        const keybinding = {
+          key: key.toLowerCase(),
+          ctrl,
+          shift,
+          alt,
+          meta,
+          edge,
+          context,
+        };
+        this.registerKeybindingInternal(keybinding, action, repeating);
+
+        if (!persistent) {
+          const ws = getRenodeWSManager();
+          const unregisterOnClear = () => {
+            this.unregisterKeybindingInternal(keybinding);
+            ws.unregisterClearCommandCallback(unregisterOnClear);
+          };
+          ws.registerClearCommandCallback(unregisterOnClear);
+        }
+      },
+      { description: 'Register new keybinding' },
+    );
   }
 
   private onKeyDown(event: KeyboardEvent): void {

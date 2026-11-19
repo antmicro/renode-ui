@@ -28,6 +28,7 @@
     createPanel,
     focusMonitor,
     registerWSProxyCallbacks,
+    registerWSProxyActions,
     createUartAndSensorPanels,
     createDisplayPanel,
     createCanPanel,
@@ -199,9 +200,9 @@
 
     namespace.registerAction(
       'close',
-      async ({ panelId, all }: { panelId?: string, all?: boolean }) => {
+      async ({ panelId, all }: { panelId?: string; all?: boolean }) => {
         if (all) {
-          dockview.closeAllGroups()
+          dockview.closeAllGroups();
         }
 
         let panel = getPanelByIdOrActive(panelId);
@@ -434,6 +435,7 @@
         onQuit,
         ignoreOpenedEvents: params.ignoreOpenedEvents!,
       });
+      registerWSProxyActions();
 
       switch (params.mode) {
         case 'Widget':

@@ -8,6 +8,10 @@ import {
   type DisplayOpenedArgs,
   type CanOpenedArgs,
   type SpiOpenedArgs,
+  type SensorType,
+  Sensor,
+  SensorTypeFromString,
+  GetSensorSourceValue,
 } from 'renode-ws-api';
 import {
   ACTIONS_MANAGER,
@@ -252,6 +256,67 @@ export const registerWSProxyCallbacks = ({
     ws.registerCanOpenedCallback(async (e) => createCanPanel({ dockview, canArgs: e }));
     ws.registerSpiOpenedCallback(async (e) => createSpiPanel({ dockview, spiArgs: e }));
   }
+};
+
+export const registerWSProxyActions = () => {
+  const ws = getRenodeWSManager();
+
+  const sensorsNamespace = ACTIONS_MANAGER.registerNamespace('sensors');
+
+  sensorsNamespace.registerAction(
+    'set',
+    async ({
+      machine,
+      peripheral,
+      measurand,
+      type,
+      value,
+    }: {
+      machine: string;
+      peripheral: string;
+      measurand: SensorType;
+      type: 'raw' | 'percent' | 'discrete';
+      value: any;
+    }) => {
+      const sensor = new Sensor(machine, peripheral, { [measurand]: type });
+      const sensorType = SensorTypeFromString(measurand);
+      const sensorValue = GetSensorSourceValue(sensorType!, type, value, true);
+      ws.setSensorSourceValue(sensor, measurand, type, sensorValue);
+    },
+    { description: 'Set sensor value' },
+  );
+
+  sensorsNamespace.registerAction(
+    'set-relative',
+    async ({
+      machine,
+      peripheral,
+      measurand,
+      type,
+      value,
+    }: {
+      machine: string;
+      peripheral: string;
+      measurand: SensorType;
+      type: 'raw' | 'percent';
+      value: number;
+    }) => {
+      const sensor = new Sensor(machine, peripheral, { [measurand]: type });
+      const sensorType = SensorTypeFromString(measurand);
+      const sensorValue = GetSensorSourceValue(sensorType!, type, value, true);
+      ws.setSensorSourceRelativeValue(sensor, measurand, type, sensorValue);
+    },
+    { description: 'Change sensor value relatively' },
+  );
+
+  const renodeNamespace = ACTIONS_MANAGER.registerNamespace('renode');
+  renodeNamespace.registerAction(
+    'execute',
+    async ({ command }: { command: string }) => {
+      ws.execMonitor([command]);
+    },
+    { description: 'Execute Renode command' },
+  );
 };
 
 export const focusMonitor = (dockview: DockviewApi) => {
