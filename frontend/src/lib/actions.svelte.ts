@@ -179,7 +179,7 @@ export class MacroParser {
           //   * unquoted string
           //   * quoted string (either " or ')
           let _, m, argument, rest;
-          if ((m = expression.match(/^([0-9]+(?:\.[0-9]+)?)(.*)/)) !== null) {
+          if ((m = expression.match(/^([+-]?[0-9]+(?:\.[0-9]+)?)(.*)/)) !== null) {
             // Match number
             [_, argument, rest] = m;
             argument = +argument;
