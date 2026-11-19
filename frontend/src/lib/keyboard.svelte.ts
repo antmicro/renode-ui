@@ -4,6 +4,7 @@ export interface Keybinding {
   alt: boolean;
   meta: boolean;
   key: string;
+  edge: 'pressed' | 'released';
   context?: string;
 }
 
@@ -27,6 +28,7 @@ export function parseKeybinding(binding: string, context?: string): Keybinding |
     shift: false,
     alt: false,
     meta: false,
+    edge: 'pressed',
     key: components.pop()!,
     context,
   };
@@ -76,6 +78,10 @@ export function getCanonicalKeybinding(keybinding: Keybinding): KeybindingCanoni
     binding = `${binding}#${keybinding.context}`;
   }
 
+  if (keybinding.edge == 'released') {
+    binding = `^${binding}`;
+  }
+
   return binding as KeybindingCanonical;
 }
 
@@ -85,11 +91,12 @@ export class KeyboardManager {
     shift: false,
     alt: false,
     meta: false,
+    edge: 'pressed',
     key: '',
   });
   public currentContext: string | undefined = $state();
   private actionHandler: (data: any) => void;
-  private bindings: Record<KeybindingCanonical, any> = {};
+  private bindings: Record<KeybindingCanonical, { data: any; repeating: boolean }> = {};
 
   constructor(actionHandler: (data: any) => void) {
     this.actionHandler = actionHandler;
@@ -112,13 +119,19 @@ export class KeyboardManager {
   public attach(target: HTMLElement): () => void {
     const onKeyDown = (e: Event) => this.onKeyDown(e as KeyboardEvent);
     const onHtermKeyDown = (e: Event) => this.onKeyDown((e as CustomEvent<KeyboardEvent>).detail);
+    const onKeyUp = (e: Event) => this.onKeyUp(e as KeyboardEvent);
+    const onHtermKeyUp = (e: Event) => this.onKeyUp((e as CustomEvent<KeyboardEvent>).detail);
 
     target.addEventListener('keydown', onKeyDown, true);
     target.addEventListener('hterm-keydown', onHtermKeyDown, true);
+    target.addEventListener('keyup', onKeyUp, true);
+    target.addEventListener('hterm-keyup', onHtermKeyUp, true);
 
     return () => {
       target.removeEventListener('keydown', onKeyDown, true);
       target.removeEventListener('hterm-keydown', onHtermKeyDown, true);
+      target.removeEventListener('keyup', onKeyUp, true);
+      target.removeEventListener('hterm-keyup', onHtermKeyUp, true);
     };
   }
 
@@ -133,7 +146,22 @@ export class KeyboardManager {
       throw new KeyboardManagerError(`Keybinding for '${binding}' is already registered`);
     }
 
-    this.bindings[canonical] = data;
+    this.bindings[canonical] = {
+      data,
+      repeating: false,
+    };
+  }
+
+  public registerKeybindingInternal(keybinding: Keybinding, data: any, repeating: boolean = false) {
+    let canonical = getCanonicalKeybinding(keybinding);
+    if (this.bindings[canonical] !== undefined) {
+      throw new KeyboardManagerError(`Keybinding for '${canonical}' is already registered`);
+    }
+
+    this.bindings[canonical] = {
+      data,
+      repeating,
+    };
   }
 
   public unregisterKeybinding(binding: string, context: string | undefined) {
@@ -150,11 +178,16 @@ export class KeyboardManager {
     delete this.bindings[canonical];
   }
 
-  private onKeyDown(event: KeyboardEvent): void {
-    if (event.repeat) {
-      return;
+  public unregisterKeybindingInternal(keybinding: Keybinding) {
+    let canonical = getCanonicalKeybinding(keybinding);
+    if (this.bindings[canonical] === undefined) {
+      throw new KeyboardManagerError(`Keybinding for '${canonical}' doesn't exist`);
     }
 
+    delete this.bindings[canonical];
+  }
+
+  private onKeyDown(event: KeyboardEvent): void {
     this.currentKey = {
       ...this.currentKey,
       ctrl: event.ctrlKey,
@@ -162,17 +195,44 @@ export class KeyboardManager {
       alt: event.altKey,
       meta: event.metaKey,
       key: event.key.toLowerCase(),
+      edge: 'pressed',
+    };
+
+    let withContext = getCanonicalKeybinding({ ...this.currentKey, context: this.currentContext });
+    let bindingWithContext = this.bindings[withContext];
+    if (bindingWithContext !== undefined && (!event.repeat || bindingWithContext.repeating)) {
+      this.actionHandler?.(bindingWithContext.data);
+      event.preventDefault();
+    }
+
+    let withoutContext = getCanonicalKeybinding({ ...this.currentKey, context: undefined });
+    let bindingWithoutContext = this.bindings[withoutContext];
+    if (bindingWithoutContext !== undefined && (!event.repeat || bindingWithoutContext.repeating)) {
+      this.actionHandler?.(bindingWithoutContext.data);
+      event.preventDefault();
+    }
+  }
+
+  private onKeyUp(event: KeyboardEvent): void {
+    this.currentKey = {
+      ...this.currentKey,
+      ctrl: event.ctrlKey,
+      shift: event.shiftKey,
+      alt: event.altKey,
+      meta: event.metaKey,
+      key: event.key.toLowerCase(),
+      edge: 'released',
     };
 
     let withContext = getCanonicalKeybinding({ ...this.currentKey, context: this.currentContext });
     if (this.bindings[withContext] !== undefined) {
-      this.actionHandler?.(this.bindings[withContext]);
+      this.actionHandler?.(this.bindings[withContext].data);
       event.preventDefault();
     }
 
     let withoutContext = getCanonicalKeybinding({ ...this.currentKey, context: undefined });
     if (this.bindings[withoutContext] !== undefined) {
-      this.actionHandler?.(this.bindings[withoutContext]);
+      this.actionHandler?.(this.bindings[withoutContext].data);
       event.preventDefault();
     }
   }

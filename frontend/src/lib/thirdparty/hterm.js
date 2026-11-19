@@ -15201,7 +15201,7 @@ hterm.Terminal.prototype.getRealRowPos = function(row, col) {
  * Initialisation of ScrollPort properties which need to be set after its DOM
  * has been initialised.
  *
- * @private
+ * @protected
  */
 hterm.Terminal.prototype.setupScrollPort_ = function() {
   this.scrollPort_.setBackgroundImage(

@@ -192,6 +192,9 @@ export class ExtendedHterm extends hterm.Terminal {
     await this.screenReady();
     await this.setStyle();
 
+    const screenNode = this.scrollPort_.getScreenNode();
+    screenNode?.addEventListener('keyup', this.onKeyUp);
+
     this.io.onTerminalResize = (width, height) => {
       this.horizontalResize(width, height);
     };
@@ -318,6 +321,20 @@ export class ExtendedHterm extends hterm.Terminal {
 
     const target: EventTarget = this.div_ ?? document;
     if (!target.dispatchEvent(newEvent)) {
+      event.preventDefault();
+      return;
+    }
+
+    super.onKeyboardActivity_(event);
+  }
+
+  onKeyUp(event: KeyboardEvent): void {
+    let newEvent = new CustomEvent('hterm-keyup', {
+      detail: event,
+      cancelable: true,
+    });
+
+    if (!document.dispatchEvent(newEvent)) {
       event.preventDefault();
     }
   }
