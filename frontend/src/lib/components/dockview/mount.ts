@@ -10,6 +10,7 @@ import {
   type SpiOpenedArgs,
 } from 'renode-ws-api';
 import {
+  ACTIONS_MANAGER,
   getRenodeWSManager,
   incrementLoadingTerminalsAmount,
   openDisplaysManager,
@@ -205,6 +206,9 @@ export const registerWSProxyCallbacks = ({
     ws.registerRenodeQuittedCallback(onQuit);
   }
 
+  ws.registerUICommandCallback((e) => {
+    ACTIONS_MANAGER.resolveAction(e.action, e.arguments);
+  });
   ws.registerClearCommandCallback(() => {
     const idsToRemove = [];
 
