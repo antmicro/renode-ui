@@ -262,7 +262,7 @@ export class ExtendedHterm extends hterm.Terminal {
           scrollbar-color: #8f8f8f #1f1f1f;
           scrollbar-gutter: stable;
         }
-        
+
         x-screen {
           overflow-y: auto !important;
         }
@@ -276,7 +276,7 @@ export class ExtendedHterm extends hterm.Terminal {
           background-color: #1f1f1f;
           border-radius: 8px;
         }
-      
+
         *::-webkit-scrollbar-thumb {
           background-color: #8f8f8f;
           border: 3px solid #1f1f1f;
@@ -286,7 +286,7 @@ export class ExtendedHterm extends hterm.Terminal {
         *::-webkit-scrollbar-thumb:hover {
           background-color: #3f3f46;
         }
-        
+
         *::-webkit-scrollbar-corner {
           background-color: #1f1f1f;
         }
@@ -313,9 +313,11 @@ export class ExtendedHterm extends hterm.Terminal {
     let newEvent = new CustomEvent('hterm-keydown', {
       detail: event,
       cancelable: true,
+      bubbles: true,
     });
 
-    if (!document.dispatchEvent(newEvent)) {
+    const target: EventTarget = this.div_ ?? document;
+    if (!target.dispatchEvent(newEvent)) {
       event.preventDefault();
     }
   }

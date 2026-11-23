@@ -18,7 +18,6 @@
     setSocketInitializer,
     type PanelType,
     type SocketInitializerFn,
-    KEYBOARD_MANAGER,
   } from '$lib/store.svelte';
   import { RenodeProxySession, type UartOpenedArgs } from 'renode-ws-api';
   import LoadingScreen from '../loaders/LoadingScreen.svelte';
@@ -36,6 +35,8 @@
   } from './mount';
   import Error from '../loaders/Error.svelte';
   import type { DockviewApi } from 'dockview-core';
+  import { KeyboardManager } from '$lib/keyboard.svelte';
+  import { MacroParser } from '$lib/actions.svelte';
 
   interface RunInCloudProps {
     customProxyInitializer: () => Promise<RenodeProxySession>;
@@ -70,6 +71,10 @@
   });
 
   const DOCKVIEW_NAMESPACE = 'node';
+
+  const keyboardManager = new KeyboardManager((macro) =>
+    MacroParser.parseSingleAndExecute(ACTIONS_MANAGER, macro as string),
+  );
 
   let dockElement: HTMLElement;
   let isLoading = $state(true);
@@ -448,7 +453,7 @@
 
       focusMonitor(dockview);
       dockview.onDidActivePanelChange((panel) => {
-        KEYBOARD_MANAGER.currentContext = panel?.params?.panelType;
+        keyboardManager.currentContext = panel?.params?.panelType;
       });
 
       isLoading = false;
@@ -461,7 +466,12 @@
     }
   };
 
-  onMount(() => createUI());
+  onMount(() => {
+    const detachKeyboard = keyboardManager.attach(dockElement);
+    createUI();
+    return detachKeyboard;
+  });
+
   onDestroy(() => {
     ACTIONS_MANAGER.unregisterNamespace(DOCKVIEW_NAMESPACE);
     getRenodeWSManager()?.dispose();

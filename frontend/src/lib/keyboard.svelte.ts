@@ -94,13 +94,6 @@ export class KeyboardManager {
   constructor(actionHandler: (data: any) => void) {
     this.actionHandler = actionHandler;
 
-    document.addEventListener('keydown', (event) => this.onKeyDown(event), true);
-    document.addEventListener(
-      'hterm-keydown',
-      (event: CustomEventInit<KeyboardEvent>) => this.onKeyDown(event.detail!),
-      true,
-    );
-
     this.registerKeybinding('f11', 'node.maximize');
     this.registerKeybinding('ctrl-enter', 'node.split');
     this.registerKeybinding('ctrl-backspace', 'node.close');
@@ -114,6 +107,19 @@ export class KeyboardManager {
     this.registerKeybinding('ctrl-shift-arrowdown', 'node.swap direction:below');
     this.registerKeybinding('ctrl-shift-arrowleft', 'node.swap direction:left');
     this.registerKeybinding('ctrl-shift-arrowright', 'node.swap direction:right');
+  }
+
+  public attach(target: HTMLElement): () => void {
+    const onKeyDown = (e: Event) => this.onKeyDown(e as KeyboardEvent);
+    const onHtermKeyDown = (e: Event) => this.onKeyDown((e as CustomEvent<KeyboardEvent>).detail);
+
+    target.addEventListener('keydown', onKeyDown, true);
+    target.addEventListener('hterm-keydown', onHtermKeyDown, true);
+
+    return () => {
+      target.removeEventListener('keydown', onKeyDown, true);
+      target.removeEventListener('hterm-keydown', onHtermKeyDown, true);
+    };
   }
 
   public registerKeybinding(binding: string, data: any, context?: string) {
