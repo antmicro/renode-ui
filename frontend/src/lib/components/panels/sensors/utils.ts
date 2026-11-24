@@ -1,10 +1,5 @@
-import {
-  RenodeProxySession,
-  SensorType,
-  type SensorValue,
-  type Sensor as RenodeSensor,
-} from 'renode-ws-api';
-import { LEDColour, type Button, type LED, type Peripheral } from './types';
+import { RenodeProxySession } from 'renode-ws-api';
+import { LEDColour, Sensor, type Button, type LED, type Peripheral } from './types.svelte';
 import {
   Droplet,
   Gauge,
@@ -35,29 +30,6 @@ export const ledNamesToLeds = (ledNames: string[] = []): LED[] =>
 export const btnNamesToBtns = (btnNames: string[] = []): Button[] =>
   btnNames.map((name) => ({ active: false, name: name }));
 
-export const typeToUnit = (type: SensorType) => {
-  switch (type) {
-    case SensorType.Temperature:
-      return '°C';
-    case SensorType.Acceleration:
-      return 'g';
-    case SensorType.AngularRate:
-      return 'rad/s';
-    case SensorType.Voltage:
-      return 'V';
-    case SensorType.ECG:
-      return 'nV';
-    case SensorType.Humidity:
-      return '%RH';
-    case SensorType.Pressure:
-      return 'Pa';
-    case SensorType.MagneticFluxDensity:
-      return 'nT';
-    case SensorType.Illuminance:
-      return 'lx';
-  }
-};
-
 export const machToPeripherals = async (ws: RenodeProxySession | undefined, mach: string) => {
   const proxySensors = (await ws?.getSensors(mach)) ?? [];
 
@@ -67,7 +39,7 @@ export const machToPeripherals = async (ws: RenodeProxySession | undefined, mach
     const tempPeri: Peripheral = { name: sensor.name, sensors: [] };
 
     for (const sensorType of sensor.types) {
-      const sensorObj = await sensorTypeToSensor(ws, sensor, sensorType);
+      const sensorObj = await Sensor.fromSensor(ws, sensor, sensorType);
       tempPeri.sensors.push(sensorObj);
     }
 
@@ -77,34 +49,6 @@ export const machToPeripherals = async (ws: RenodeProxySession | undefined, mach
   }
 
   return tempPeripherals;
-};
-
-const sensorTypeToSensor = async (
-  ws: RenodeProxySession | undefined,
-  sensor: RenodeSensor,
-  measurand: SensorType,
-) => {
-  let sensorValue = await ws?.getSensorSourceValue(sensor, measurand, 'raw');
-  if (!sensorValue) {
-    if (
-      measurand === SensorType.MagneticFluxDensity ||
-      measurand === SensorType.Acceleration ||
-      measurand === SensorType.AngularRate
-    ) {
-      sensorValue = {
-        sample: { x: 0, y: 0, z: 0 },
-        unit: typeToUnit(measurand),
-      } as SensorValue;
-    } else {
-      sensorValue = { sample: '', unit: typeToUnit(measurand) } as SensorValue;
-    }
-  }
-
-  return {
-    measurand: measurand,
-    types: sensor.measurands[measurand]!,
-    value: sensorValue,
-  };
 };
 
 export const sensorTypeToItem: { [key: string]: { icon: typeof Icon; text: string } } = {

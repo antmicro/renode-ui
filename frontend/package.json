@@ -56,6 +56,7 @@
     "@lucide/svelte": "^1.70.0",
     "bits-ui": "^2.18.1",
     "dockview-core": "^5.2.0",
+    "gridstack": "^14.1.0",
     "renode-ws-api": "https://builds.renode.io/api/typescript+20261126git742c6d885.tgz"
   }
 }
